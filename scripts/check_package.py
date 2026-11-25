@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+REFERENCE_LINK = re.compile(r"\]\((references/[^\s)#]+)(?:#[^)]*)?\)")
 
 
 def read_json(path):
@@ -40,16 +41,24 @@ def check_skills():
         require(directory.is_dir() and not directory.is_symlink(), f"Invalid skill directory {name}")
         require(len(name) <= 64 and NAME.fullmatch(name), f"Invalid skill name {name}")
         skill_file = directory / "SKILL.md"
-        require(not skill_file.is_symlink(), f"Unexpected symlink {skill_file}")
-        opening, header, body = skill_file.read_text(encoding="utf-8").split("---\n", 2)
-        require(not opening and bool(body.strip()), f"Incomplete skill {name}")
+        require(skill_file.is_file() and not skill_file.is_symlink(), f"Expected SKILL.md in {name}")
+        opening, separator, contents = skill_file.read_text(encoding="utf-8").partition("---\n")
+        header, closing, body = contents.partition("---\n")
+        require(not opening and separator and closing and body.strip(), f"Incomplete skill {name}")
         entries = [line.split(": ", 1) for line in header.strip().splitlines()]
+        require(all(len(entry) == 2 for entry in entries), f"Invalid frontmatter in {name}")
         metadata = dict(entries)
         require(len(metadata) == len(entries), f"Duplicate frontmatter field in {name}")
         require(metadata.get("name") == name, f"Skill frontmatter name must match {name}")
         require(0 < len(metadata.get("description", "")) <= 1024, f"Invalid description for {name}")
         require(metadata.get("license") == "Apache-2.0", f"Missing Apache-2.0 license for {name}")
         require("allowed-tools" not in metadata, f"Unexpected tool preapproval for {name}")
+        for reference in REFERENCE_LINK.findall(body):
+            path = directory / reference
+            require(
+                path.is_file() and directory in path.resolve().parents,
+                f"Missing or out-of-scope reference {reference} in {name}",
+            )
         names.add(name)
     return names
 

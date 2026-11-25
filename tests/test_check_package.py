@@ -57,6 +57,12 @@ class PackageCheckTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Invalid expected outcomes", result.stderr)
 
+    def test_missing_skill_reference(self):
+        (self.preview / "skills/dispatch-exceptions/references/shift-handoff.md").unlink()
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Missing or out-of-scope reference references/shift-handoff.md", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
