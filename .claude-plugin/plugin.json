@@ -1,5 +1,5 @@
 {
-  "name": "vektor-tms",
+  "name": "vektor",
   "displayName": "Vektor TMS",
   "version": "0.1.0",
   "description": "Check freight exceptions, manifest assignments, and document readiness in Vektor TMS.",

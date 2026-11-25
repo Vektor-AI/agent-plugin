@@ -1,56 +1,74 @@
-# Vektor TMS Agent Plugin
+# Vektor TMS for your assistant
 
-Check a load’s status, find its assigned equipment, or see which paperwork is missing. The Vektor TMS skills guide your assistant through those tasks using the Vektor connection you authorize.
+Check whether a delivery is on track, find the equipment assigned to a manifest, and see which delivered loads still need paperwork. The Vektor plugin gives your assistant workflows for each task. It uses the connection and company access you authorize in Vektor TMS.
 
-## Get started with Claude Code
+## Get started
 
-You’ll need Claude Code and a Vektor TMS account with access to the loads you want to check.
+Use **Claude Code** or **Codex CLI** with plugin support. You’ll need a Vektor TMS account with access to the company you want to work in.
 
-1. Follow the [Vektor connection guide](https://mcp.vektortms.com/) to add Vektor to Claude Code. You can reuse the connection if it appears in `/mcp` for the directory where you start Claude Code.
-2. From the same directory, clone the repository once. Launch Claude Code with `--plugin-dir` each time you want to use this local preview.
+### Claude Code
 
-   ```sh
-   git clone https://github.com/Vektor-AI/agent-plugin.git
-   claude --plugin-dir ./agent-plugin
+1. In Claude Code 2.1.275 or newer, follow the [Vektor connection guide](https://mcp.vektortms.com/) from the directory where you use Claude Code. If Vektor already appears in `/mcp`, you can reuse that connection.
+
+2. Run this in Claude Code:
+
+   ```text
+   /plugin install vektor --marketplace Vektor-AI/agent-plugin
    ```
 
-3. In Claude Code, run `/mcp` to check your Vektor connection. If prompted, select the company you want to use and approve the access you need. Then ask one of the questions below.
+3. Confirm the marketplace source and choose where to install the plugin. Run `/reload-plugins` if prompted, then check `/mcp`. Sign in and choose your company.
 
-This is a local skills preview. Connecting to Vektor remains a separate step. The portable [Agent Plugins](https://agent-plugins.org/specification) manifest uses the same skills. Availability in other assistants will follow platform testing.
+### Codex CLI
 
-## Try a real task
+1. Install the skills:
 
-Use your own load or manifest references in the first two examples.
+   ```sh
+   codex plugin marketplace add Vektor-AI/agent-plugin
+   codex plugin add vektor@vektor-plugins
+   ```
 
-| Ask | What to expect |
+2. If you haven’t connected Vektor yet, add the remote server:
+
+   ```sh
+   codex mcp add vektor --url https://mcp.vektortms.com/mcp
+   ```
+
+3. Follow the sign-in prompt and choose your company. If the connection needs sign-in later, run `codex mcp login vektor`. Open a new Codex session to use the skills.
+
+### Other assistants
+
+Use `https://mcp.vektortms.com/mcp` in assistants that support remote MCP and OAuth. This source preview’s install instructions cover Claude Code and Codex CLI. Host directories have their own publishing and installation steps.
+
+## Try a task
+
+Ask in your own words. To pick a skill yourself, run a Claude Code command below or type `@` in Codex and search for its name.
+
+| Ask your assistant | Claude Code command |
 | --- | --- |
-| Is load DEMO-101 still on track for its delivery appointment? | The appointment, latest available ETA or status, and anything the records leave uncertain. |
-| What truck is assigned to manifest DEMO-M301? | The current assignment from Vektor, with the relevant stop and timestamp when available. |
-| Which delivered loads still need a POD this week? | Loads with a missing recorded proof of delivery and any gaps in coverage. |
-| What does the next shift need to know about today’s deliveries? | Confirmed dispatch exceptions, open questions, and the next check on each load. |
+| Is load DEMO-101 still on track for delivery? | `/vektor:dispatch-exceptions` |
+| What truck is assigned to manifest DEMO-M301? | `/vektor:manifest-fleet-context` |
+| Which loads delivered this week still need a POD? | `/vektor:document-readiness` |
+| What delivery exceptions should the next shift know about? | `/vektor:dispatch-exceptions` |
 
-You can also call a skill directly with `/vektor-tms:dispatch-exceptions`, `/vektor-tms:manifest-fleet-context`, or `/vektor-tms:document-readiness`.
+Replace the example IDs with references from your company. A typical answer includes the source records and what still needs checking. The workflows use read-only tools. Your Vektor permissions determine which records the assistant can see.
 
-These workflows ask the assistant to use read-only tools. Your connection and Vektor permissions control which tools are available. If a result is missing or incomplete, the skill explains what it could verify and what still needs checking.
+## Troubleshoot
 
-## Need help?
+- **Vektor is missing or signed out.** Check `/mcp` in your assistant. Use the exact URL `https://mcp.vektortms.com/mcp` when connecting.
+- **The assistant asks about a company.** Check which company you selected at sign-in. Use the [connection guide](https://mcp.vektortms.com/) to authorize another company.
+- **The assistant can’t find a load or document.** Check the reference, date range, and your permissions in Vektor.
+- **You used an earlier preview.** Install `vektor` and replace any saved `/vektor-tms:…` commands with `/vektor:…`. You can reuse your Vektor connection.
 
-- **Vektor is missing from `/mcp`.** Follow the connection guide in the directory where you start Claude Code. Use the exact address `https://mcp.vektortms.com/mcp`.
-- **A skill is missing.** Start Claude Code with `--plugin-dir` pointing to your checkout, then try one of the skill commands above.
-- **The assistant asks you to confirm the company.** In Vektor, check which company you selected when authorizing the connection. To use a different company, follow the connection guide to connect it.
-- **A load or document is unavailable.** Check the reference and your permissions in Vektor before retrying.
+## Share feedback
+
+If a task took too many steps, a tool was missing, or an answer was hard to use, try this prompt:
+
+> Draft feedback about this Vektor task. Include what I tried, what I expected, and what happened. Use synthetic examples and leave out customer, load, and account details. Show me the draft.
+
+Review the draft and send it through [Vektor support](https://vektortms.com/contact). For a reproducible plugin issue with synthetic data, you can also use [GitHub Issues](https://github.com/Vektor-AI/agent-plugin/issues).
 
 ## Contribute
 
-Have a better way to handle a freight task? Open a PR with a synthetic example and explain what a correct answer should include. See the [contribution guide](CONTRIBUTING.md) and [private reporting instructions](SECURITY.md).
+The skills are open source under [Apache-2.0](LICENSE). To improve a workflow, start with the [contribution guide](CONTRIBUTING.md) and the [synthetic cases](evals/cases.json). Report security findings through the [private reporting instructions](SECURITY.md).
 
-From the repository root, run the same source checks as GitHub Actions. They check manifest agreement, skill structure, local references, and synthetic case definitions.
-
-```sh
-python3 scripts/check_package.py
-python3 tests/test_check_package.py
-```
-
-The [synthetic cases](evals/cases.json) are prompts and expected outcomes you can try in your assistant. If you have Claude Code installed, run `claude plugin validate --strict .` to check skill discovery locally.
-
-The source is licensed under [Apache-2.0](LICENSE). Access to hosted Vektor TMS services requires an authorized account and is governed by the [Vektor TMS Terms](https://vektortms.com/terms).
+Access to hosted Vektor TMS services is governed by the [Vektor TMS Terms](https://vektortms.com/terms).
