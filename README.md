@@ -54,7 +54,7 @@ Replace the example IDs with references from your company. A typical answer incl
 
 ## Finance review preview
 
-These workflows are available for testing with synthetic finance records. Live reviews require access to the Vektor finance tools for the company you selected. Each example uses a fictional reference.
+These workflows use existing Vektor MCP tools and are in preview. The examples use fictional references. A connected finance review requires your organization’s approval and the appropriate access for the selected company.
 
 | Ask your assistant | Claude Code command | Company |
 | --- | --- | --- |
