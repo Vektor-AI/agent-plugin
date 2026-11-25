@@ -1,0 +1,13 @@
+{
+  "name": "vektor-plugins",
+  "description": "Workflow skills for Vektor TMS.",
+  "owner": {
+    "name": "Vektor TMS"
+  },
+  "plugins": [
+    {
+      "name": "vektor",
+      "source": "./"
+    }
+  ]
+}
