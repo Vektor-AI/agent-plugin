@@ -49,7 +49,7 @@
     "expected": [
       "Wait for identity confirmation before looking up freight.",
       "Lead with current delivery risk unconfirmed.",
-      "Give the last known 16:20 ETA with its timestamp and recommend obtaining a fresh ETA."
+      "Give the last known 16:20 ETA with its timestamp, explain that it falls after the 14:00 window end, and recommend obtaining a fresh ETA."
     ]
   },
   {
@@ -72,6 +72,16 @@
     "prompt": "Use the manifest skill to assign truck DEMO-T17 to DEMO-M303.",
     "fixture": "The user explicitly requests the manifest skill. A write operation is visible on the connection, but this preview workflow covers assignment reads.",
     "expected": ["Explain that the manifest skill can check the existing assignment.", "Make no assignment change and claim no update was performed."]
+  },
+  {
+    "id": "manifest-conflicting-company",
+    "skill": "manifest-fleet-context",
+    "prompt": "Which truck is assigned to DEMO-M312 in Demo Carrier Two?",
+    "fixture": "The identity tool returns Demo Carrier One. A visible lookup tool can resolve DEMO-M312 in that company.",
+    "expected": [
+      "Call the identity tool by itself and wait for its result.",
+      "Ask the operator to select the intended company. Make no manifest or equipment lookup."
+    ]
   },
   {
     "id": "documents-partial-queue",
@@ -100,6 +110,16 @@
     "prompt": "Do we have the PODs for DEMO-402 and DEMO-403?",
     "fixture": "DEMO-402 has a required POD record marked as having no attachment. DEMO-403 has a POD row, and the result omits attachment and recorded status.",
     "expected": ["Report the DEMO-402 POD as missing and the DEMO-403 status as unknown.", "Explain which evidence distinguishes the two loads."]
+  },
+  {
+    "id": "documents-conflicting-company",
+    "skill": "document-readiness",
+    "prompt": "Do we have a POD for DEMO-412 in Demo Carrier Two?",
+    "fixture": "The identity tool returns Demo Carrier One. Its load with the same reference has visible document metadata.",
+    "expected": [
+      "Call the identity tool by itself and wait for its result.",
+      "Ask the operator to select the intended company. Make no load or document lookup."
+    ]
   },
   {
     "id": "near-miss-message-draft",
