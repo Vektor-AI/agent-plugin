@@ -1,0 +1,13 @@
+{
+  "name": "vektor-tms",
+  "displayName": "Vektor TMS",
+  "version": "0.1.0",
+  "description": "Check freight exceptions, manifest assignments, and document readiness in Vektor TMS.",
+  "author": {
+    "name": "Vektor TMS",
+    "url": "https://vektortms.com/"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://vektortms.com/",
+  "repository": "https://github.com/Vektor-AI/agent-plugin"
+}
