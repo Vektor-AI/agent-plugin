@@ -206,9 +206,9 @@
     "id": "broker-payable-missing-variance",
     "skill": "carrier-payable-review",
     "prompt": "Does bill AP-403 match expected pay?",
-    "fixture": "The exact broker bill omits varianceKnown and expected money. A compatibility string looks like zero.",
+    "fixture": "The exact broker bill shows billed and expected amounts but omits varianceKnown. A compatibility string looks like zero.",
     "expected": [
-      "Report comparison presence unreported. Do not convert the compatibility placeholder to true zero."
+      "Report comparison presence unreported. The compatibility placeholder and a subtraction are insufficient evidence of variance."
     ]
   },
   {
@@ -253,7 +253,7 @@
     "prompt": "Review staff settlement EMP-306 at Demo Carrier East. Was the contractor paid?",
     "fixture": "Carrier finance is authorized for the chosen staff statement. It is CLOSED with USD 850 net, a USD 900 booked commission and USD 50 deduction.",
     "expected": [
-      "Follow the individual staff review and explain amounts by category, with payment unconfirmed."
+      "Follow the individual staff review and explain amounts by category. Payment and paid amount are unconfirmed. The USD 850 net is the statement amount."
     ]
   },
   {
