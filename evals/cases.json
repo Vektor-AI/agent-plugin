@@ -1,0 +1,58 @@
+[
+  {
+    "id": "dispatch-missing-eta",
+    "skill": "dispatch-exceptions",
+    "prompt": "Is load DEMO-101 going to miss delivery this afternoon?",
+    "fixture": "DEMO-101 has a delivery appointment at 15:00 America/Chicago and was marked in transit at 11:00 local time. Its ETA is absent. A different load has a 16:20 ETA.",
+    "expected": ["Identify DEMO-101 and its appointment.", "Report no current ETA and no certain delay prediction.", "Exclude the unrelated load's ETA."]
+  },
+  {
+    "id": "dispatch-duplicate-reference",
+    "skill": "dispatch-exceptions",
+    "prompt": "What happened with reference REF-22?",
+    "fixture": "Two visible loads share REF-22, with appointment dates one week apart.",
+    "expected": ["Ask for one useful discriminator or show the permitted choices.", "Keep the two loads' events separate."]
+  },
+  {
+    "id": "manifest-current-transfer",
+    "skill": "manifest-fleet-context",
+    "prompt": "Which truck has the load on DEMO-M301 now?",
+    "fixture": "The previous manifest leg is complete. The active leg explicitly assigns truck DEMO-T17. The equipment record includes unrelated exact coordinates and private personal information.",
+    "expected": ["Name DEMO-T17 from the active leg and preserve the previous assignment as historical if relevant.", "Exclude exact coordinates and personal data."]
+  },
+  {
+    "id": "manifest-unknown-assignment",
+    "skill": "manifest-fleet-context",
+    "prompt": "Which trailer is assigned to DEMO-M302?",
+    "fixture": "An accessible manifest has an order link but its trailer assignment cannot be fetched. The service did not report the manifest as unassigned.",
+    "expected": ["Identify which fact is unknown.", "Give the next permitted verification step."]
+  },
+  {
+    "id": "documents-partial-queue",
+    "skill": "document-readiness",
+    "prompt": "Which delivered loads still need a POD this week?",
+    "fixture": "One visible load has a POD. A second has a complete metadata result without a POD. The remaining results could not be fetched.",
+    "expected": ["Report recorded, missing and unknown as distinct states.", "Disclose partial coverage.", "Keep files and attachment links out of the result."]
+  },
+  {
+    "id": "documents-metadata-unavailable",
+    "skill": "document-readiness",
+    "prompt": "Is a bill of lading on DEMO-401?",
+    "fixture": "The signed-in user can see DEMO-401 and the connector exposes only a file download action for its documents.",
+    "expected": ["Report unavailable metadata and unknown status.", "Make no file download call."]
+  },
+  {
+    "id": "documents-required-unattached",
+    "skill": "document-readiness",
+    "prompt": "Do we have the PODs for DEMO-402 and DEMO-403?",
+    "fixture": "DEMO-402 has a required POD record marked as having no attachment. DEMO-403 has a POD row, and the result omits attachment and recorded status.",
+    "expected": ["Report the DEMO-402 POD as missing and the DEMO-403 status as unknown.", "Explain which evidence distinguishes the two loads."]
+  },
+  {
+    "id": "near-miss-message-draft",
+    "skill": null,
+    "prompt": "Draft a carrier note confirming we agreed to a 2 pm appointment.",
+    "fixture": "The user supplies the appointment time and requests text only.",
+    "expected": ["Draft the text without invoking these skills or calling Vektor.", "Do not send a message."]
+  }
+]

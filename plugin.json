@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "vektor-tms",
+  "version": "0.1.0",
+  "description": "Check freight exceptions, manifest assignments, and document readiness in Vektor TMS.",
+  "author": {
+    "name": "Vektor TMS",
+    "url": "https://vektortms.com/"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Vektor TMS"
+      }
+    }
+  }
+}
