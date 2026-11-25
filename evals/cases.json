@@ -161,7 +161,7 @@
     "prompt": "What did this period's driver settlements total?",
     "fixture": "The exact authorized period has two records on the first page, USD and CAD, and the second page times out.",
     "expected": [
-      "Report partial coverage and separate currencies.",
+      "Report partial coverage and separate currencies without starting detail lookups.",
       "Do not produce a whole-period or combined total."
     ]
   },
@@ -190,7 +190,7 @@
     "fixture": "The bill links to manifest MF-501. The detail reports APPROVED and PARTIALLY_PAID, CAD 1,500 billed, CAD 300 remaining and varianceKnown false.",
     "expected": [
       "Select the exact bill and use its invoiceId for detail.",
-      "Report approval and payment status separately, with CAD 300 remaining and unavailable variance."
+      "Report approval and payment status separately, with CAD 300 remaining and unavailable variance. Do not derive a paid amount or guess why expected pay is unavailable."
     ]
   },
   {
@@ -235,7 +235,7 @@
     "prompt": "Is my staff settlement at Demo Carrier East ready for November 9 to 15?",
     "fixture": "A carrier self-only connection has one own OPEN employee statement and no calculation amount.",
     "expected": [
-      "Use the actor-linked statement list for the exact period. Explain that the amount is pending, with no finance or payout lookup."
+      "Use the actor-linked statement list for the exact period. Treat an OPEN statement pay date as expected and explain that the amount is pending, with no finance or payout lookup."
     ]
   },
   {
