@@ -1,5 +1,6 @@
 """Check the public package without connecting to Vektor or an assistant."""
 
+import hashlib
 import json
 import re
 from collections.abc import Hashable
@@ -13,6 +14,7 @@ from yaml.nodes import MappingNode
 
 ROOT = Path(__file__).resolve().parents[1]
 NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+SCHEMA_SHA256 = "0a4aad95ce337878ad38802ebf0daa3fde76abe3f65400c86bcbb1ec0b3ab883"
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n(.*)", re.DOTALL)
 MARKDOWN_LINK = re.compile(r"\]\((?:<([^>\n]+)>|([^\s)]+))")
 
@@ -48,7 +50,13 @@ def require(condition, message: str) -> None:
 
 def check_manifests() -> None:
     portable = read_json("plugin.json")
-    schema = read_json("schemas/plugin.schema.json")
+    schema_path = ROOT / "schemas/plugin.schema.json"
+    schema_bytes = schema_path.read_bytes()
+    require(
+        hashlib.sha256(schema_bytes).hexdigest() == SCHEMA_SHA256,
+        "Vendored manifest schema differs from the pinned upstream revision",
+    )
+    schema = json.loads(schema_bytes)
     error = next(Draft202012Validator(schema).iter_errors(portable), None)
     require(error is None, f"plugin.json: {error.message}" if error else "")
     require(
@@ -65,7 +73,8 @@ def check_manifests() -> None:
     require(portable["name"] == "vektor", "The install ID must be vektor")
     interface = portable.get("extensions", {}).get("com.openai", {}).get("interface", {})
     require(
-        interface.get("displayName") == claude.get("displayName") == "Vektor TMS",
+        isinstance(interface, dict)
+        and interface.get("displayName") == claude.get("displayName") == "Vektor TMS",
         "Manifests disagree on the Vektor TMS display name",
     )
 
@@ -89,6 +98,18 @@ def check_marketplace(path: str, source: dict[str, str] | str) -> None:
         plugins[0].get("name") == "vektor" and plugins[0].get("source") == source,
         f"{path}: the marketplace entry must point to this plugin's repository root",
     )
+    if isinstance(source, dict):
+        require(
+            plugins[0].get("policy")
+            == {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+            f"{path}: expected an available Codex marketplace entry with ON_INSTALL authentication",
+        )
+    else:
+        owner = marketplace.get("owner")
+        require(
+            isinstance(owner, dict) and owner.get("name") == "Vektor TMS",
+            f"{path}: expected Vektor TMS as marketplace owner",
+        )
 
 
 def check_links(path: Path, body: str, scope: Path) -> None:

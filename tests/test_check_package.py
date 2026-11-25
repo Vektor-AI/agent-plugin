@@ -62,6 +62,31 @@ class PackageCheckTest(unittest.TestCase):
             "marketplace entry must point to this plugin's repository root", result.stderr
         )
 
+    def test_invalid_codex_marketplace_policy(self):
+        self.edit_json(
+            ".agents/plugins/marketplace.json",
+            lambda marketplace: marketplace["plugins"][0]["policy"].update(
+                authentication="ON_INSTALL_TYPO"
+            ),
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("with ON_INSTALL authentication", result.stderr)
+
+    def test_missing_claude_marketplace_owner(self):
+        self.edit_json(
+            ".claude-plugin/marketplace.json", lambda marketplace: marketplace.pop("owner")
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("expected Vektor TMS as marketplace owner", result.stderr)
+
+    def test_modified_vendored_schema(self):
+        self.edit_json("schemas/plugin.schema.json", lambda schema: schema.pop("required"))
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("schema differs from the pinned upstream revision", result.stderr)
+
     def test_missing_readme_link(self):
         with (self.preview / "README.md").open("a", encoding="utf-8") as readme:
             readme.write("\n[Invalid](missing.md)\n")

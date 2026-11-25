@@ -8,7 +8,7 @@ Use **Claude Code** or **Codex CLI** with plugin support. You’ll need a Vektor
 
 ### Claude Code
 
-1. Follow the [Vektor connection guide](https://mcp.vektortms.com/) from the directory where you use Claude Code. If Vektor already appears in `/mcp`, you can reuse that connection.
+1. In Claude Code 2.1.275 or newer, follow the [Vektor connection guide](https://mcp.vektortms.com/) from the directory where you use Claude Code. If Vektor already appears in `/mcp`, you can reuse that connection.
 
 2. Run this in Claude Code:
 
@@ -16,7 +16,7 @@ Use **Claude Code** or **Codex CLI** with plugin support. You’ll need a Vektor
    /plugin install vektor --marketplace Vektor-AI/agent-plugin
    ```
 
-3. Run `/reload-plugins` if prompted, then check `/mcp`. Sign in and choose the company you want to work in.
+3. Confirm the marketplace source and choose where to install the plugin. Run `/reload-plugins` if prompted, then check `/mcp`. Sign in and choose your company.
 
 ### Codex CLI
 
