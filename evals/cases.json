@@ -42,6 +42,13 @@
     "expected": ["Report unavailable metadata and unknown status.", "Make no file download call."]
   },
   {
+    "id": "documents-required-unattached",
+    "skill": "document-readiness",
+    "prompt": "Do we have the PODs for DEMO-402 and DEMO-403?",
+    "fixture": "DEMO-402 has a required POD record marked as having no attachment. DEMO-403 has a POD row, and the result omits attachment and recorded status.",
+    "expected": ["Report the DEMO-402 POD as missing and the DEMO-403 status as unknown.", "Explain which evidence distinguishes the two loads."]
+  },
+  {
     "id": "near-miss-message-draft",
     "skill": null,
     "prompt": "Draft a carrier note confirming we agreed to a 2 pm appointment.",
