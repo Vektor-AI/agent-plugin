@@ -136,8 +136,8 @@
     "expected": ["Ask which kind of readiness the user means before selecting a workflow.", "Make no tool call to infer intent from the record."]
   },
   {
-    "id": "carrier-settlement-updating",
-    "skill": "carrier-settlement-review",
+    "id": "truck-settlement-updating",
+    "skill": "truck-settlement-review",
     "prompt": "Why is driver settlement STL-301 for Demo Carrier East lower than expected?",
     "fixture": "A carrier connection exposes carrier settlement review. One exact row has a complete composite key, net USD 484.00, and an UPDATING projection.",
     "expected": [
@@ -146,8 +146,8 @@
     ]
   },
   {
-    "id": "carrier-settlement-same-name",
-    "skill": "carrier-settlement-review",
+    "id": "truck-settlement-same-name",
+    "skill": "truck-settlement-review",
     "prompt": "Read settlement STL-302 at Demo Carrier East.",
     "fixture": "Two active carrier connections have identical display names and different company references. The prompt and context do not select one.",
     "expected": [
@@ -156,8 +156,8 @@
     ]
   },
   {
-    "id": "carrier-settlement-cursor-failed",
-    "skill": "carrier-settlement-review",
+    "id": "truck-settlement-cursor-failed",
+    "skill": "truck-settlement-review",
     "prompt": "What did this period's driver settlements total?",
     "fixture": "The exact authorized period has two records on the first page, USD and CAD, and the second page times out.",
     "expected": [
@@ -166,8 +166,8 @@
     ]
   },
   {
-    "id": "carrier-settlement-zero-known",
-    "skill": "carrier-settlement-review",
+    "id": "truck-settlement-zero-known",
+    "skill": "truck-settlement-review",
     "prompt": "How much net pay is on driver settlement STL-304?",
     "fixture": "A same-company exact statement has projection CURRENT, completed calculation evidence, and net USD 0.00. A different row lacks net.",
     "expected": [
@@ -175,8 +175,8 @@
     ]
   },
   {
-    "id": "carrier-settlement-wrong-company",
-    "skill": "carrier-settlement-review",
+    "id": "truck-settlement-wrong-company",
+    "skill": "truck-settlement-review",
     "prompt": "Check driver settlement STL-305 for Demo Carrier East.",
     "fixture": "The active authorized company is Demo Brokerage West. Both projected finance tool families are visible.",
     "expected": [

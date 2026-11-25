@@ -58,7 +58,7 @@ These workflows are available for testing with synthetic finance records. Live r
 
 | Ask your assistant | Claude Code command | Company |
 | --- | --- | --- |
-| Why is driver settlement STL-301 still being recalculated? | `/vektor:carrier-settlement-review` | Carrier |
+| Why is driver settlement STL-301 still being recalculated? | `/vektor:truck-settlement-review` | Carrier |
 | Is carrier bill AP-401 approved and what does the broker still owe? | `/vektor:carrier-payable-review` | Broker |
 | Can you explain my own staff pay statement for the last pay period? | `/vektor:staff-settlement-review` | Carrier or broker |
 | What is blocking approval for the Office staff pay run? | `/vektor:staff-settlement-review` | Carrier or broker with staff finance access |

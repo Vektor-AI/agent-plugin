@@ -1,10 +1,10 @@
 ---
-name: carrier-settlement-review
-description: Review a carrier company's driver, vendor, or company settlement in Vektor TMS. Use for a freight pay statement, a bounded settlement-period review, or an explanation of gross, net, booked adjustments, and calculation state. Staff pay and broker carrier bills have separate workflows.
+name: truck-settlement-review
+description: Review a carrier company's driver, vendor, or company settlement in Vektor TMS. Use for a truck settlement, a freight pay statement, a bounded settlement-period review, or an explanation of gross, net, booked adjustments, and calculation state. Staff pay and broker carrier bills have separate workflows.
 license: Apache-2.0
 ---
 
-# Carrier settlement review
+# Truck settlement review
 
 Find the carrier's statement and explain the amounts that Vektor has recorded for it.
 
