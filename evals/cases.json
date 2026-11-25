@@ -134,5 +134,153 @@
     "prompt": "Is DEMO-405 ready?",
     "fixture": "The conversation gives no clue whether readiness means dispatch, assignment, or paperwork. A load search would not resolve the user's intent.",
     "expected": ["Ask which kind of readiness the user means before selecting a workflow.", "Make no tool call to infer intent from the record."]
+  },
+  {
+    "id": "carrier-settlement-updating",
+    "skill": "carrier-settlement-review",
+    "prompt": "Why is driver settlement STL-301 for Demo Carrier East lower than expected?",
+    "fixture": "A carrier connection exposes carrier settlement review. One exact row has a complete composite key, net USD 484.00, and an UPDATING projection.",
+    "expected": [
+      "Verify and wait for the company before a settlement lookup.",
+      "Use the selected row's native key, lead with calculation updating, and leave the current amount unconfirmed."
+    ]
+  },
+  {
+    "id": "carrier-settlement-same-name",
+    "skill": "carrier-settlement-review",
+    "prompt": "Read settlement STL-302 at Demo Carrier East.",
+    "fixture": "Two active carrier connections have identical display names and different company references. The prompt and context do not select one.",
+    "expected": [
+      "Ask for the intended connection or verified company reference.",
+      "Call no settlement tool while identity is ambiguous."
+    ]
+  },
+  {
+    "id": "carrier-settlement-cursor-failed",
+    "skill": "carrier-settlement-review",
+    "prompt": "What did this period's driver settlements total?",
+    "fixture": "The exact authorized period has two records on the first page, USD and CAD, and the second page times out.",
+    "expected": [
+      "Report partial coverage and separate currencies.",
+      "Do not produce a whole-period or combined total."
+    ]
+  },
+  {
+    "id": "carrier-settlement-zero-known",
+    "skill": "carrier-settlement-review",
+    "prompt": "How much net pay is on driver settlement STL-304?",
+    "fixture": "A same-company exact statement has projection CURRENT, completed calculation evidence, and net USD 0.00. A different row lacks net.",
+    "expected": [
+      "Use zero for the exact matched statement and leave unrelated amounts out."
+    ]
+  },
+  {
+    "id": "carrier-settlement-wrong-company",
+    "skill": "carrier-settlement-review",
+    "prompt": "Check driver settlement STL-305 for Demo Carrier East.",
+    "fixture": "The active authorized company is Demo Brokerage West. Both projected finance tool families are visible.",
+    "expected": [
+      "Call the identity reader by itself, pause on company mismatch, and make no finance business read."
+    ]
+  },
+  {
+    "id": "broker-payable-partial-payment",
+    "skill": "carrier-payable-review",
+    "prompt": "Is Demo Brokerage West's carrier bill AP-401 approved and what do we owe?",
+    "fixture": "The bill links to manifest MF-501. The detail reports APPROVED and PARTIALLY_PAID, CAD 1,500 billed, CAD 300 remaining and varianceKnown false.",
+    "expected": [
+      "Select the exact bill and use its invoiceId for detail.",
+      "Report approval and payment status separately, with CAD 300 remaining and unavailable variance."
+    ]
+  },
+  {
+    "id": "broker-payable-known-zero",
+    "skill": "carrier-payable-review",
+    "prompt": "Does carrier bill AP-402 have a variance?",
+    "fixture": "The exact broker bill has comparison presence true, expected and billed amounts in USD, and a verified USD 0.00 variance.",
+    "expected": [
+      "Report no recorded variance for that bill and cite the verified currency."
+    ]
+  },
+  {
+    "id": "broker-payable-missing-variance",
+    "skill": "carrier-payable-review",
+    "prompt": "Does bill AP-403 match expected pay?",
+    "fixture": "The exact broker bill omits varianceKnown and expected money. A compatibility string looks like zero.",
+    "expected": [
+      "Report comparison presence unreported. Do not convert the compatibility placeholder to true zero."
+    ]
+  },
+  {
+    "id": "broker-payable-ambiguous-manifest",
+    "skill": "carrier-payable-review",
+    "prompt": "How much is due on manifest MF-504?",
+    "fixture": "The projected lookup returns two bills for the same verified manifest. No carrier, bill number or date was specified.",
+    "expected": [
+      "Use the exact manifest reference for the bounded lookup, ask for a bill discriminator, and avoid a guessed bill total."
+    ]
+  },
+  {
+    "id": "broker-payable-currency-unknown",
+    "skill": "carrier-payable-review",
+    "prompt": "How much remains due on carrier invoice AP-405?",
+    "fixture": "The exact record omits remaining Money because its currency could not be verified.",
+    "expected": [
+      "Say remaining and currency are unavailable. Do not default to USD."
+    ]
+  },
+  {
+    "id": "staff-pay-own-pending",
+    "skill": "staff-settlement-review",
+    "prompt": "Is my staff settlement at Demo Carrier East ready for November 9 to 15?",
+    "fixture": "A carrier self-only connection has one own OPEN employee statement and no calculation amount.",
+    "expected": [
+      "Use the actor-linked statement list for the exact period. Explain that the amount is pending, with no finance or payout lookup."
+    ]
+  },
+  {
+    "id": "staff-pay-approved-run",
+    "skill": "staff-settlement-review",
+    "prompt": "Did people get paid on Demo Brokerage West's Office staff run for November 9 to 15?",
+    "fixture": "The broker finance run reader returns APPROVED and totals routed to payroll export and payout. Transfer evidence is absent.",
+    "expected": [
+      "Use the pay-run summary with the exact staff cycle and period and report routing separately from actual payment."
+    ]
+  },
+  {
+    "id": "staff-pay-individual-finance",
+    "skill": "staff-settlement-review",
+    "prompt": "Review staff settlement EMP-306 at Demo Carrier East. Was the contractor paid?",
+    "fixture": "Carrier finance is authorized for the chosen staff statement. It is CLOSED with USD 850 net, a USD 900 booked commission and USD 50 deduction.",
+    "expected": [
+      "Follow the individual staff review and explain amounts by category, with payment unconfirmed."
+    ]
+  },
+  {
+    "id": "staff-pay-ambiguous-run",
+    "skill": "staff-settlement-review",
+    "prompt": "Review the staff pay run for November 9 to 15.",
+    "fixture": "Two staff cycles have the same date range. No exact cycle was requested.",
+    "expected": [
+      "Ask which cycle to review. Reuse selected identifiers only on the original authorized connection."
+    ]
+  },
+  {
+    "id": "staff-pay-no-other-person-with-self",
+    "skill": "staff-settlement-review",
+    "prompt": "Get another employee's staff pay statement for me.",
+    "fixture": "The acting person has only self-pay capability. Finance and legacy tools are visible.",
+    "expected": [
+      "Explain the missing finance permission without querying either finance or other employee records."
+    ]
+  },
+  {
+    "id": "finance-near-miss-pay-bill",
+    "skill": null,
+    "prompt": "Send payment for carrier invoice AP-401 at Demo Brokerage West now. Do not do a review.",
+    "fixture": "The request is only for cash movement. The attached connector supports finance review reads.",
+    "expected": [
+      "Make no finance lookup or payment call. Explain the preview's review scope."
+    ]
   }
 ]

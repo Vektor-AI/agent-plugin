@@ -1,6 +1,6 @@
 # Vektor TMS for your assistant
 
-Check whether a delivery is on track, find the equipment assigned to a manifest, and see which delivered loads still need paperwork. The Vektor plugin gives your assistant workflows for each task. It uses the connection and company access you authorize in Vektor TMS.
+Check whether a delivery is on track, find the equipment assigned to a manifest, and see which delivered loads still need paperwork. The Vektor plugin also includes finance review workflows for eligible carrier, broker, and staff accounts. It uses the connection and company access you authorize in Vektor TMS.
 
 ## Get started
 
@@ -51,6 +51,17 @@ Ask in your own words. To pick a skill yourself, run a Claude Code command below
 | What delivery exceptions should the next shift know about? | `/vektor:dispatch-exceptions` |
 
 Replace the example IDs with references from your company. A typical answer includes the source records and what still needs checking. The workflows use read-only tools. Your Vektor permissions determine which records the assistant can see.
+
+## Finance review preview
+
+These workflows require access to the Vektor finance connector for the company you selected. Each example uses a fictional reference.
+
+| Ask your assistant | Claude Code command | Company |
+| --- | --- | --- |
+| Why is driver settlement STL-301 still being recalculated? | `/vektor:carrier-settlement-review` | Carrier |
+| Is carrier bill AP-401 approved and what does the broker still owe? | `/vektor:carrier-payable-review` | Broker |
+| Can you explain my own staff pay statement for the last pay period? | `/vektor:staff-settlement-review` | Carrier or broker |
+| What is blocking approval for the Office staff pay run? | `/vektor:staff-settlement-review` | Carrier or broker with staff finance access |
 
 ## Troubleshoot
 
