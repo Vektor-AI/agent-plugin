@@ -41,7 +41,7 @@ Use `https://mcp.vektortms.com/mcp` in assistants that support remote MCP and OA
 
 ## Try a task
 
-Ask in your own words. To pick a skill yourself, run a Claude Code command below or type `@` in Codex and search for its name.
+Ask in your own words. To choose a skill directly, run a Claude Code command below or type `$` in Codex CLI and select the skill by name.
 
 | Ask your assistant | Claude Code command |
 | --- | --- |
