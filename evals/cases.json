@@ -190,7 +190,7 @@
     "fixture": "The bill links to manifest MF-501. The detail reports APPROVED and PARTIALLY_PAID, CAD 1,500 billed, CAD 300 remaining and varianceKnown false.",
     "expected": [
       "Select the exact bill and use its invoiceId for detail.",
-      "Report approval and payment status separately, with CAD 300 remaining and unavailable variance. Do not derive a paid amount or guess why expected pay is unavailable."
+      "Report approval and payment status separately, with CAD 300 remaining and unavailable variance. Keep the paid amount and expected amount unavailable. Give a reason for unavailable variance only if it is in the result."
     ]
   },
   {
@@ -235,7 +235,7 @@
     "prompt": "Is my staff settlement at Demo Carrier East ready for November 9 to 15?",
     "fixture": "A carrier self-only connection has one own OPEN employee statement and no calculation amount.",
     "expected": [
-      "Use the actor-linked statement list for the exact period. Treat an OPEN statement pay date as expected and explain that the amount is pending, with no finance or payout lookup."
+      "Use the actor-linked statement list for the exact period. Treat an OPEN statement pay date as expected and explain that the amount is pending. Payment is unconfirmed by the statement. Make no finance or payout lookup."
     ]
   },
   {
