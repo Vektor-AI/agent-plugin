@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "vektor",
   "version": "0.1.0",
-  "description": "Review freight exceptions, manifest assignments, document readiness, and authorized finance in Vektor TMS.",
+  "description": "Check freight exceptions, manifest assignments, and document readiness in Vektor TMS.",
   "author": {
     "name": "Vektor TMS",
     "url": "https://vektortms.com/"

@@ -1,6 +1,6 @@
 # Vektor TMS for your assistant
 
-Check whether a delivery is on track, find the equipment assigned to a manifest, and see which delivered loads still need paperwork. The Vektor plugin also includes finance review workflows for eligible carrier, broker, and staff accounts. It uses the connection and company access you authorize in Vektor TMS.
+Check whether a delivery is on track, find the equipment assigned to a manifest, and see which delivered loads still need paperwork. The Vektor plugin gives your assistant workflows for each task. It uses the connection and company access you authorize in Vektor TMS.
 
 ## Get started
 
@@ -54,7 +54,7 @@ Replace the example IDs with references from your company. A typical answer incl
 
 ## Finance review preview
 
-These workflows require access to the Vektor finance connector for the company you selected. Each example uses a fictional reference.
+These workflows are available for testing with synthetic finance records. Live reviews require access to the Vektor finance tools for the company you selected. Each example uses a fictional reference.
 
 | Ask your assistant | Claude Code command | Company |
 | --- | --- | --- |
