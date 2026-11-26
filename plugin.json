@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "vektor",
   "version": "0.2.2",
-  "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting.",
+  "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, Analytics reporting, and settlement and carrier bill reviews.",
   "author": {
     "name": "Vektor TMS",
     "url": "https://vektortms.com/"
@@ -25,7 +25,7 @@
       "interface": {
         "displayName": "Vektor TMS",
         "shortDescription": "Read-only freight workflows for Vektor TMS",
-        "longDescription": "Check delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting in Vektor TMS. The workflows use read-only tools on the Vektor connection you authorize for one company.",
+        "longDescription": "Check delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting in Vektor TMS, and review settlements and carrier bills through an approved finance connection. The workflows use read-only tools on the Vektor connection you authorize for one company.",
         "developerName": "Vektor TMS",
         "category": "Productivity",
         "capabilities": [
