@@ -19,6 +19,7 @@ NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 SCHEMA_SHA256 = "0a4aad95ce337878ad38802ebf0daa3fde76abe3f65400c86bcbb1ec0b3ab883"
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n(.*)", re.DOTALL)
 MARKDOWN_LINK = re.compile(r"\]\((?:<([^>\n]+)>|([^\s)]+))")
+REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[[^\]\n]+\]:[ \t]*(?:<([^>\n]+)>|(\S+))", re.MULTILINE)
 SKILL_KEYS = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
 RESERVED_WORDS = ("anthropic", "claude")
 LISTING_URLS = ("documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl")
@@ -31,7 +32,6 @@ SHIPPED_PATHS = (
     ".mcp.json",
     "mcp.json",
     ".claude-plugin/plugin.json",
-    ".claude-plugin/icon.png",
     "plugin.json",
 )
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -180,9 +180,15 @@ def check_marketplace(path: str, source: dict[str, str] | str) -> None:
         )
 
 
+def link_targets(body: str) -> list[str]:
+    """Inline link targets and reference-style link definitions."""
+    found = MARKDOWN_LINK.findall(body) + REFERENCE_DEFINITION.findall(body)
+    return [bracketed or bare for bracketed, bare in found]
+
+
 def check_links(path: Path, body: str, scope: Path) -> None:
-    for bracketed, bare in MARKDOWN_LINK.findall(body):
-        link = urlsplit(bracketed or bare)
+    for target_text in link_targets(body):
+        link = urlsplit(target_text)
         reference = unquote(link.path)
         if not reference or link.scheme or link.netloc:
             continue
@@ -229,6 +235,23 @@ def check_skills() -> set[str]:
         )
         require(metadata.get("license") == "Apache-2.0", f"Missing Apache-2.0 license for {name}")
         require("allowed-tools" not in metadata, f"Unexpected tool preapproval for {name}")
+        if "compatibility" in metadata:
+            compatibility = metadata["compatibility"]
+            require(
+                isinstance(compatibility, str)
+                and compatibility.strip()
+                and len(compatibility) <= 500,
+                f"Invalid compatibility for {name}: use text of at most 500 characters",
+            )
+        if "metadata" in metadata:
+            values = metadata["metadata"]
+            require(
+                isinstance(values, dict)
+                and all(
+                    isinstance(key, str) and isinstance(value, str) for key, value in values.items()
+                ),
+                f"Invalid metadata for {name}: use a map of text keys to text values",
+            )
         for document in directory.rglob("*.md"):
             text = body if document == skill_file else document.read_text(encoding="utf-8")
             check_links(document, text, directory)
@@ -239,8 +262,8 @@ def check_skills() -> set[str]:
 
 
 def check_reference_depth(path: Path, body: str) -> None:
-    for bracketed, bare in MARKDOWN_LINK.findall(body):
-        link = urlsplit(bracketed or bare)
+    for target_text in link_targets(body):
+        link = urlsplit(target_text)
         if link.scheme or link.netloc or not link.path:
             continue
         raise SystemExit(
@@ -300,11 +323,12 @@ def git(*args: str) -> str:
     return result.stdout
 
 
-def check_release(base: str, version: str) -> str:
+def check_release(base: str, version: str, icon: str) -> str:
     # NUL-separated names are never quoted, and without rename detection a moved
     # file lists both its old and its new path.
-    changed = git("diff", "--name-only", "--no-renames", "-z", base, "--", *SHIPPED_PATHS)
-    changed += git("ls-files", "--others", "--exclude-standard", "-z", "--", *SHIPPED_PATHS)
+    paths = (*SHIPPED_PATHS, icon.removeprefix("./"))
+    changed = git("diff", "--name-only", "--no-renames", "-z", base, "--", *paths)
+    changed += git("ls-files", "--others", "--exclude-standard", "-z", "--", *paths)
     shipped = sorted(filter(None, changed.split("\0")))
     if not shipped:
         return "no shipped changes"
@@ -331,7 +355,8 @@ if __name__ == "__main__":
     skills = check_skills()
     count = check_cases(skills)
     base = os.environ.get("PLUGIN_BASE_REF")
-    release = check_release(base, version) if base else "release check skipped"
+    icon = read_json(".claude-plugin/plugin.json")["icon"]
+    release = check_release(base, version, icon) if base else "release check skipped"
     print(
         f"Validated manifests, marketplaces, local links, {len(skills)} skills and {count} "
         f"synthetic cases ({release})."

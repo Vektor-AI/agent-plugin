@@ -16,4 +16,4 @@ A directory listing follows the branch or tag chosen when the plugin was submitt
 
 ## Check an update
 
-In a clean Claude Code profile, install the previous release, then run `claude plugin update vektor@vektor-plugins` and confirm the new version and its workflows with `claude plugin details vektor`.
+In a clean Claude Code profile, install the previous release. Refresh the marketplace with `claude plugin marketplace update vektor-plugins`, because `claude plugin update` reads the cached marketplace, then run `claude plugin update vektor@vektor-plugins`. Confirm the new version and its workflows with `claude plugin details vektor`.

@@ -304,6 +304,50 @@ class PackageCheckTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(f"CHANGELOG.md needs a ## {version} entry", result.stderr)
 
+    def test_moved_icon_change_needs_a_new_version(self):
+        (self.preview / "assets").mkdir()
+        shutil.move(self.preview / ".claude-plugin/icon.png", self.preview / "assets/icon.png")
+        self.edit_json(
+            ".claude-plugin/plugin.json", lambda value: value.update(icon="./assets/icon.png")
+        )
+        self.edit_json(
+            "plugin.json",
+            lambda value: value["extensions"]["com.openai"]["interface"].update(
+                logo="./assets/icon.png", composerIcon="./assets/icon.png"
+            ),
+        )
+        self.assertEqual(self.check_package().returncode, 0)
+        base = self.snapshot()
+        with (self.preview / "assets/icon.png").open("ab") as icon:
+            icon.write(b"\0")
+        result = self.check_package(base)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Raise the plugin version: assets/icon.png changed", result.stderr)
+
+    def test_compatibility_must_be_text(self):
+        skill = self.preview / "skills/analytics/SKILL.md"
+        original = skill.read_text(encoding="utf-8")
+        skill.write_text(original.replace("---\n", "---\ncompatibility: [a, b]\n", 1), "utf-8")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid compatibility for analytics", result.stderr)
+
+    def test_metadata_values_must_be_text(self):
+        skill = self.preview / "skills/analytics/SKILL.md"
+        original = skill.read_text(encoding="utf-8")
+        skill.write_text(original.replace("---\n", "---\nmetadata:\n  owner: [a]\n", 1), "utf-8")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid metadata for analytics", result.stderr)
+
+    def test_reference_style_link_between_reference_files(self):
+        reference = self.preview / "skills/dispatch-exceptions/references/shift-handoff.md"
+        with reference.open("a", encoding="utf-8") as handle:
+            handle.write("\nSee [the skill][skill].\n\n[skill]: ../SKILL.md\n")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Reference files must not link to other files", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
