@@ -4,7 +4,7 @@ Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json
 
 ## 0.2.2
 
-- Added finance review previews for truck settlements, carrier bills and staff pay. They use a separate finance connection approved by your organization.
+- Added finance review previews for truck settlements, carrier bills and staff pay. They read only what your Vektor permissions allow.
 
 ## 0.2.1
 

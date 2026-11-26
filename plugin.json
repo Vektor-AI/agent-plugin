@@ -25,7 +25,7 @@
       "interface": {
         "displayName": "Vektor TMS",
         "shortDescription": "Read-only freight workflows for Vektor TMS",
-        "longDescription": "Check delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting in Vektor TMS, and review settlements and carrier bills through an approved finance connection. The workflows use read-only tools on the Vektor connection you authorize for one company.",
+        "longDescription": "Check delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting in Vektor TMS, and review settlements and carrier bills. The workflows use read-only tools on the Vektor connection you authorize for one company.",
         "developerName": "Vektor TMS",
         "category": "Productivity",
         "capabilities": [
