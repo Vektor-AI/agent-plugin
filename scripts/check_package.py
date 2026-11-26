@@ -19,7 +19,9 @@ NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 SCHEMA_SHA256 = "0a4aad95ce337878ad38802ebf0daa3fde76abe3f65400c86bcbb1ec0b3ab883"
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n(.*)", re.DOTALL)
 MARKDOWN_LINK = re.compile(r"\]\((?:<([^>\n]+)>|([^\s)]+))")
-REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[[^\]\n]+\]:[ \t]*(?:<([^>\n]+)>|(\S+))", re.MULTILINE)
+REFERENCE_DEFINITION = re.compile(
+    r"^ {0,3}\[[^\]\n]+\]:[ \t]*\n?[ \t]*(?:<([^>\n]+)>|(\S+))", re.MULTILINE
+)
 SKILL_KEYS = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
 RESERVED_WORDS = ("anthropic", "claude")
 LISTING_URLS = ("documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl")
@@ -147,7 +149,10 @@ def check_listing(claude: dict, interface: dict) -> None:
         and interface.get("termsOfServiceURL") == claude["termsOfServiceUrl"],
         "Manifests disagree on the privacy policy or terms URL",
     )
-    require(interface.get("logo") == icon, "The Codex logo must use the plugin icon")
+    require(
+        interface.get("logo") == interface.get("composerIcon") == icon,
+        "The Codex logo and composerIcon must use the plugin icon",
+    )
 
 
 def check_marketplace(path: str, source: dict[str, str] | str) -> None:

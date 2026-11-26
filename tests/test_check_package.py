@@ -348,6 +348,25 @@ class PackageCheckTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Reference files must not link to other files", result.stderr)
 
+    def test_reference_definition_on_the_next_line(self):
+        reference = self.preview / "skills/dispatch-exceptions/references/shift-handoff.md"
+        with reference.open("a", encoding="utf-8") as handle:
+            handle.write("\nSee [the skill][skill].\n\n[skill]:\n  ../SKILL.md\n")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Reference files must not link to other files", result.stderr)
+
+    def test_composer_icon_must_use_the_plugin_icon(self):
+        self.edit_json(
+            "plugin.json",
+            lambda value: value["extensions"]["com.openai"]["interface"].update(
+                composerIcon="./assets/missing.png"
+            ),
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("The Codex logo and composerIcon must use the plugin icon", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
