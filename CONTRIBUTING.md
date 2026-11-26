@@ -14,6 +14,6 @@ Install [uv](https://docs.astral.sh/uv/), [actionlint 1.7.12](https://github.com
 PLUGIN_BASE_REF=origin/master make check validate
 ```
 
-`make check` covers manifest and marketplace consistency, listing details, skill frontmatter, local links, synthetic case definitions, workflow configuration, and a new version when a workflow changed since `PLUGIN_BASE_REF`. `make validate` runs Claude's plugin directory validator. The synthetic case definitions also give you prompts and outcomes to try in your assistant.
+`make check` covers manifest and marketplace consistency, listing details, skill frontmatter, local links, synthetic case definitions, workflow configuration, and a higher version when a skill, manifest or the icon changed since `PLUGIN_BASE_REF`. `make validate` runs Claude's plugin directory validator. The synthetic case definitions also give you prompts and outcomes to try in your assistant.
 
 Keep customer details, conversation logs, access tokens, raw freight documents, and internal configuration out of issues and pull requests. Use the [private reporting channel](SECURITY.md) for security findings. Package publication and marketplace configuration are maintainer changes.

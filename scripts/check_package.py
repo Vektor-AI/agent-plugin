@@ -22,7 +22,18 @@ MARKDOWN_LINK = re.compile(r"\]\((?:<([^>\n]+)>|([^\s)]+))")
 SKILL_KEYS = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
 RESERVED_WORDS = ("anthropic", "claude")
 LISTING_URLS = ("documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl")
-SHIPPED_PATHS = ("skills/", "hooks/", "agents/", "commands/", ".mcp.json", "mcp.json")
+# Git pathspecs for the files installed copies receive. A change to any of them is a release.
+SHIPPED_PATHS = (
+    "skills",
+    "hooks",
+    "agents",
+    "commands",
+    ".mcp.json",
+    "mcp.json",
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/icon.png",
+    "plugin.json",
+)
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
@@ -276,7 +287,7 @@ def check_cases(skills: set[str]) -> int:
 def check_changelog(version: str) -> None:
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
     require(
-        re.search(rf"^## {re.escape(version)}\b", changelog, re.MULTILINE),
+        re.search(rf"^## {re.escape(version)}[ \t]*$", changelog, re.MULTILINE),
         f"CHANGELOG.md needs a ## {version} entry",
     )
 
@@ -290,11 +301,11 @@ def git(*args: str) -> str:
 
 
 def check_release(base: str, version: str) -> str:
-    changed = git("diff", "--name-only", base, "--").splitlines()
-    changed += git("ls-files", "--others", "--exclude-standard").splitlines()
-    shipped = sorted(
-        path for path in changed if any(path.startswith(prefix) for prefix in SHIPPED_PATHS)
-    )
+    # NUL-separated names are never quoted, and without rename detection a moved
+    # file lists both its old and its new path.
+    changed = git("diff", "--name-only", "--no-renames", "-z", base, "--", *SHIPPED_PATHS)
+    changed += git("ls-files", "--others", "--exclude-standard", "-z", "--", *SHIPPED_PATHS)
+    shipped = sorted(filter(None, changed.split("\0")))
     if not shipped:
         return "no shipped changes"
     try:
@@ -304,7 +315,7 @@ def check_release(base: str, version: str) -> str:
     require(
         parse_version(version) > parse_version(previous),
         f"Raise the plugin version: {shipped[0]} changed since {base}, "
-        f"but the version is still {previous}",
+        f"but version {version} is not above {previous}",
     )
     return f"version {previous} -> {version}"
 

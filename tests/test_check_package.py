@@ -258,7 +258,7 @@ class PackageCheckTest(unittest.TestCase):
         self.edit_skill()
         result = self.check_package(tip)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("the version is still 9.0.0", result.stderr)
+        self.assertIn("version 9.0.0 is not above 9.0.0", result.stderr)
 
     def test_documentation_change_needs_no_new_version(self):
         base = self.snapshot()
@@ -267,6 +267,42 @@ class PackageCheckTest(unittest.TestCase):
         result = self.check_package(base)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("no shipped changes", result.stdout)
+
+    def test_manifest_change_needs_a_new_version(self):
+        base = self.snapshot()
+        for manifest in ("plugin.json", ".claude-plugin/plugin.json"):
+            self.edit_json(manifest, lambda value: value.update(description="Changed description."))
+        result = self.check_package(base)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Raise the plugin version: .claude-plugin/plugin.json changed", result.stderr)
+
+    def test_file_moved_out_of_a_skill_needs_a_new_version(self):
+        (self.preview / "skills/analytics/notes.md").write_text("Notes.\n", "utf-8")
+        base = self.snapshot()
+        shutil.move(self.preview / "skills/analytics/notes.md", self.preview / "notes.md")
+        result = self.check_package(base)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Raise the plugin version: skills/analytics/notes.md changed", result.stderr)
+
+    def test_added_file_with_a_non_ascii_name_needs_a_new_version(self):
+        base = self.snapshot()
+        (self.preview / "skills/analytics/caf\u00e9.md").write_text("Notes.\n", "utf-8")
+        result = self.check_package(base)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "Raise the plugin version: skills/analytics/caf\u00e9.md changed", result.stderr
+        )
+
+    def test_changelog_heading_must_match_exactly(self):
+        changelog = self.preview / "CHANGELOG.md"
+        version = json.loads((self.preview / "plugin.json").read_text(encoding="utf-8"))["version"]
+        changelog.write_text(
+            changelog.read_text(encoding="utf-8").replace(f"## {version}", f"## {version}-rc.1"),
+            "utf-8",
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(f"CHANGELOG.md needs a ## {version} entry", result.stderr)
 
 
 if __name__ == "__main__":
