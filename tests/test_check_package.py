@@ -15,7 +15,7 @@ class PackageCheckTest(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         self.addCleanup(temp.cleanup)
         self.preview = Path(temp.name)
-        for directory in (".agents", ".claude-plugin", "skills", "evals", "schemas", "scripts"):
+        for directory in (".agents", ".claude-plugin", "skills", "schemas", "scripts"):
             shutil.copytree(ROOT / directory, self.preview / directory)
         for document in (
             "plugin.json",
@@ -149,18 +149,6 @@ class PackageCheckTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("invalid or duplicate key 'name'", result.stderr)
 
-    def test_duplicate_evaluation_case(self):
-        self.edit_json("evals/cases.json", lambda cases: cases.append(cases[0]))
-        result = self.check_package()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Invalid or duplicate case", result.stderr)
-
-    def test_malformed_evaluation_outcome(self):
-        self.edit_json("evals/cases.json", lambda cases: cases[0].update(expected="single string"))
-        result = self.check_package()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Invalid expected outcomes", result.stderr)
-
     def test_missing_skill_reference(self):
         (self.preview / "skills/dispatch-exceptions/references/shift-handoff.md").unlink()
         result = self.check_package()
@@ -268,6 +256,39 @@ class PackageCheckTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("no shipped changes", result.stdout)
 
+    def replace_in(self, relative_path, old, new):
+        path = self.preview / relative_path
+        text = path.read_text(encoding="utf-8")
+        self.assertIn(old, text)
+        path.write_text(text.replace(old, new, 1), "utf-8")
+
+    def test_missing_compatibility(self):
+        skill = "skills/analytics/SKILL.md"
+        text = (self.preview / skill).read_text(encoding="utf-8")
+        line = next(item for item in text.splitlines() if item.startswith("compatibility:"))
+        self.replace_in(skill, line + "\n", "")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid compatibility for analytics", result.stderr)
+
+    def test_long_compatibility(self):
+        self.replace_in(
+            "skills/analytics/SKILL.md", "compatibility: ", "compatibility: " + "x" * 500
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid compatibility for analytics", result.stderr)
+
+    def test_company_check_drift(self):
+        self.replace_in(
+            "skills/document-readiness/SKILL.md",
+            "- **Company first.** ",
+            "- **Company first.** Ask the user. ",
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Company first paragraphs differ between skills", result.stderr)
+
     def test_manifest_change_needs_a_new_version(self):
         base = self.snapshot()
         for manifest in ("plugin.json", ".claude-plugin/plugin.json"):
@@ -325,9 +346,10 @@ class PackageCheckTest(unittest.TestCase):
         self.assertIn("Raise the plugin version: assets/icon.png changed", result.stderr)
 
     def test_compatibility_must_be_text(self):
-        skill = self.preview / "skills/analytics/SKILL.md"
-        original = skill.read_text(encoding="utf-8")
-        skill.write_text(original.replace("---\n", "---\ncompatibility: [a, b]\n", 1), "utf-8")
+        skill = "skills/analytics/SKILL.md"
+        text = (self.preview / skill).read_text(encoding="utf-8")
+        line = next(item for item in text.splitlines() if item.startswith("compatibility:"))
+        self.replace_in(skill, line, "compatibility: [a, b]")
         result = self.check_package()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Invalid compatibility for analytics", result.stderr)
@@ -366,6 +388,15 @@ class PackageCheckTest(unittest.TestCase):
         result = self.check_package()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("The Codex logo and composerIcon must use the plugin icon", result.stderr)
+
+    def test_missing_company_check(self):
+        skill = "skills/document-readiness/SKILL.md"
+        text = (self.preview / skill).read_text(encoding="utf-8")
+        line = next(item for item in text.splitlines() if item.startswith("- **Company first.**"))
+        self.replace_in(skill, line + "\n", "")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Missing the company check in document-readiness", result.stderr)
 
 
 if __name__ == "__main__":
