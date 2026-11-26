@@ -1,5 +1,16 @@
 [
   {
+    "id": "setup-signed-out-connection",
+    "skill": "setup",
+    "prompt": "Vektor stopped answering in Claude. How do I get it working again?",
+    "fixture": "Vektor tools are listed, but the read-only identity call returns an authorization error that asks the user to sign in again.",
+    "expected": [
+      "Make one read-only identity call and no freight lookup.",
+      "Explain that the Vektor connection needs to be signed in again and give the steps for Claude web or desktop using https://mcp.vektortms.com/mcp.",
+      "Ask for no password, token, code or callback URL."
+    ]
+  },
+  {
     "id": "analytics-weekly-fuel-rates",
     "skill": "analytics",
     "prompt": "How much did we spend on fuel per mile last full week, by truck, in Chicago time?",

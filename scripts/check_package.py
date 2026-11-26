@@ -36,6 +36,11 @@ SHIPPED_PATHS = (
     ".claude-plugin/plugin.json",
     "plugin.json",
 )
+GRADER_TYPES = {"regex", "tool_used", "tool_order", "file_exists", "llm", "baseline"}
+MOCK_SERVER = "vektor"
+COMPANY_CHECK = "- **Company first.**"
+# Skills that look up records and must open with the shared company check.
+COMPANY_CHECK_SKILLS = ("dispatch-exceptions", "document-readiness", "manifest-fleet-context")
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
@@ -210,6 +215,7 @@ def check_skills() -> set[str]:
     skill_dirs = sorted(skills_root.iterdir())
     require(skill_dirs, "Expected at least one skill")
     names = set()
+    company_checks = {}
     for directory in skill_dirs:
         name = directory.name
         require(
@@ -240,14 +246,11 @@ def check_skills() -> set[str]:
         )
         require(metadata.get("license") == "Apache-2.0", f"Missing Apache-2.0 license for {name}")
         require("allowed-tools" not in metadata, f"Unexpected tool preapproval for {name}")
-        if "compatibility" in metadata:
-            compatibility = metadata["compatibility"]
-            require(
-                isinstance(compatibility, str)
-                and compatibility.strip()
-                and len(compatibility) <= 500,
-                f"Invalid compatibility for {name}: use text of at most 500 characters",
-            )
+        compatibility = metadata.get("compatibility")
+        require(
+            isinstance(compatibility, str) and compatibility.strip() and len(compatibility) <= 500,
+            f"Invalid compatibility for {name}: use text of at most 500 characters",
+        )
         if "metadata" in metadata:
             values = metadata["metadata"]
             require(
@@ -257,12 +260,22 @@ def check_skills() -> set[str]:
                 ),
                 f"Invalid metadata for {name}: use a map of text keys to text values",
             )
+        checks = [line for line in body.splitlines() if line.startswith(COMPANY_CHECK)]
+        require(len(checks) <= 1, f"More than one company check in {name}")
+        if checks:
+            company_checks[name] = checks[0]
         for document in directory.rglob("*.md"):
             text = body if document == skill_file else document.read_text(encoding="utf-8")
             check_links(document, text, directory)
             if document != skill_file:
                 check_reference_depth(document, text)
         names.add(name)
+    missing = sorted(set(COMPANY_CHECK_SKILLS) - set(company_checks))
+    require(not missing, "Missing the company check in " + ", ".join(missing))
+    require(
+        len(set(company_checks.values())) <= 1,
+        "Company first paragraphs differ between skills: " + ", ".join(sorted(company_checks)),
+    )
     return names
 
 
@@ -309,6 +322,69 @@ def check_cases(skills: set[str]) -> int:
     require(
         skills | {None} == covered, "Each skill and a non-activation case need evaluation coverage"
     )
+    return len(cases)
+
+
+def mock_names(directory: Path) -> set[str]:
+    server = directory / "mocks" / MOCK_SERVER
+    names = set()
+    for mock in sorted(server.glob("*.md")) if server.is_dir() else []:
+        metadata, body = read_frontmatter(mock)
+        require(metadata.get("type", "fixed") in {"fixed", "agent"}, f"Invalid mock type in {mock}")
+        require(body.strip(), f"Empty mock {mock.relative_to(ROOT)}")
+        names.add(mock.stem)
+    return names
+
+
+def check_native_evals(skills: set[str]) -> int:
+    evals = ROOT / "evals"
+    suite_mocks = mock_names(evals)
+    cases = sorted(
+        path.parent
+        for path in evals.rglob("prompt.md")
+        if not {"mocks", "results"} & set(path.relative_to(evals).parts)
+    )
+    require(cases, "Expected native evaluation cases under evals/")
+    covered = set()
+    for case in cases:
+        label = case.relative_to(ROOT)
+        group = case.relative_to(evals).parts[0]
+        require(
+            group in skills or group == "near-miss",
+            f"{label}: group a case under a skill name or near-miss",
+        )
+        covered.add(group)
+        metadata, prompt = read_frontmatter(case / "prompt.md")
+        require(prompt.strip() and metadata.get("description"), f"{label}: incomplete prompt.md")
+        mocked = suite_mocks | mock_names(case)
+        graders = sorted((case / "graders").glob("*.md"))
+        require(graders, f"{label}: expected at least one grader")
+        for grader in graders:
+            metadata, criteria = read_frontmatter(grader)
+            kind = metadata.get("type")
+            require(kind in GRADER_TYPES, f"{grader.relative_to(ROOT)}: unknown grader type")
+            if kind == "regex":
+                try:
+                    re.compile(metadata["pattern"])
+                except (KeyError, TypeError, re.error) as error:
+                    raise SystemExit(f"{grader.relative_to(ROOT)}: invalid pattern") from error
+            if kind == "llm":
+                require(criteria.strip(), f"{grader.relative_to(ROOT)}: empty rubric")
+            named = [metadata.get("tool")] if kind == "tool_used" else []
+            if kind == "tool_order":
+                named = [metadata.get("before"), metadata.get("after")]
+            for entry in named:
+                tool = entry.get("tool") if isinstance(entry, dict) else entry
+                if not isinstance(tool, str) or not tool.startswith("mcp__"):
+                    continue
+                prefix = f"mcp__{MOCK_SERVER}__"
+                require(
+                    tool.startswith(prefix) and tool.removeprefix(prefix) in mocked,
+                    f"{grader.relative_to(ROOT)}: {tool} is not mocked, so the grader cannot fail",
+                )
+    missing = sorted(skills - covered)
+    require(not missing, f"Skills without a native evaluation case: {', '.join(missing)}")
+    require("near-miss" in covered, "Expected a near-miss evaluation case")
     return len(cases)
 
 
@@ -359,10 +435,11 @@ if __name__ == "__main__":
         check_links(document, document.read_text(encoding="utf-8"), ROOT)
     skills = check_skills()
     count = check_cases(skills)
+    native = check_native_evals(skills)
     base = os.environ.get("PLUGIN_BASE_REF")
     icon = read_json(".claude-plugin/plugin.json")["icon"]
     release = check_release(base, version, icon) if base else "release check skipped"
     print(
-        f"Validated manifests, marketplaces, local links, {len(skills)} skills and {count} "
-        f"synthetic cases ({release})."
+        f"Validated manifests, marketplaces, local links, {len(skills)} skills, {count} synthetic "
+        f"cases and {native} native evaluation cases ({release})."
     )

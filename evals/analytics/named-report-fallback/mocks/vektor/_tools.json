@@ -1,0 +1,50 @@
+{
+  "tools": [
+    {
+      "name": "reporting_RatePerMileService_RatePerMileGet",
+      "title": "Get Rate Per Mile Report",
+      "description": "The rate-per-mile report for a period: report.group[] holds each group's totals and summary holds the totals across the period, including summary.order.ratePerDistance.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "object",
+            "description": "Required: the call returns InvalidArgument without it. Omitting groupBy returns the whole report as one ungrouped block.",
+            "properties": {
+              "period": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "type": "string",
+                    "description": "YYYY-MM-DD"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "description": "YYYY-MM-DD"
+                  }
+                }
+              },
+              "periodType": {
+                "type": "string",
+                "enum": [
+                  "PERIOD_TYPE_FIRST_STOP_APPOINTMENT_START_DATE",
+                  "PERIOD_TYPE_LAST_STOP_APPOINTMENT_START_DATE",
+                  "PERIOD_TYPE_BOTH_APPOINTMENT_DATES"
+                ]
+              }
+            }
+          },
+          "sort": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "filter"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "tools": [
+    {
+      "name": "document_Document_EntityGet",
+      "title": "Get Document Entity",
+      "description": "Every live document filed against the given entities, one row per document naming its own entityId. Pass entityIds as an array even for one entity, with the one entityType they share; an order's paperwork is under DOCUMENT_ENTITY_TYPE_LOAD with the order ids. Unlike Document_Get it also returns documents that have no file attached yet. Not paginated.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of the entities, all of the one entityType."
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "DOCUMENT_ENTITY_TYPE_DRIVER",
+              "DOCUMENT_ENTITY_TYPE_TRUCK",
+              "DOCUMENT_ENTITY_TYPE_TRAILER",
+              "DOCUMENT_ENTITY_TYPE_LOAD",
+              "DOCUMENT_ENTITY_TYPE_CARRIER"
+            ]
+          }
+        },
+        "required": [
+          "entityIds",
+          "entityType"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ]
+}

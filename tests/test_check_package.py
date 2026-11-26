@@ -268,6 +268,90 @@ class PackageCheckTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("no shipped changes", result.stdout)
 
+    def replace_in(self, relative_path, old, new):
+        path = self.preview / relative_path
+        text = path.read_text(encoding="utf-8")
+        self.assertIn(old, text)
+        path.write_text(text.replace(old, new, 1), "utf-8")
+
+    def test_missing_compatibility(self):
+        skill = "skills/analytics/SKILL.md"
+        text = (self.preview / skill).read_text(encoding="utf-8")
+        line = next(item for item in text.splitlines() if item.startswith("compatibility:"))
+        self.replace_in(skill, line + "\n", "")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid compatibility for analytics", result.stderr)
+
+    def test_long_compatibility(self):
+        self.replace_in(
+            "skills/analytics/SKILL.md", "compatibility: ", "compatibility: " + "x" * 500
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid compatibility for analytics", result.stderr)
+
+    def test_company_check_drift(self):
+        self.replace_in(
+            "skills/document-readiness/SKILL.md",
+            "- **Company first.** ",
+            "- **Company first.** Ask the user. ",
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Company first paragraphs differ between skills", result.stderr)
+
+    def test_grader_for_an_unmocked_tool(self):
+        grader = self.preview / "evals/near-miss/carrier-thank-you/graders/unmocked.md"
+        grader.write_text(
+            "---\ntype: tool_used\ntool: mcp__vektor__core_Orders_Delete\nmax: 0\n---\n", "utf-8"
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("mcp__vektor__core_Orders_Delete is not mocked", result.stderr)
+
+    def test_skill_without_a_native_case(self):
+        shutil.rmtree(self.preview / "evals/setup")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Skills without a native evaluation case: setup", result.stderr)
+
+    def test_missing_near_miss_case(self):
+        shutil.rmtree(self.preview / "evals/near-miss")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Expected a near-miss evaluation case", result.stderr)
+
+    def test_case_outside_a_skill_group(self):
+        shutil.copytree(
+            self.preview / "evals/near-miss/carrier-thank-you",
+            self.preview / "evals/billing/carrier-thank-you",
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("group a case under a skill name or near-miss", result.stderr)
+
+    def test_unknown_grader_type(self):
+        grader = self.preview / "evals/near-miss/carrier-thank-you/graders/unknown.md"
+        grader.write_text("---\ntype: exact\n---\n", "utf-8")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("unknown grader type", result.stderr)
+
+    def test_invalid_regex_grader(self):
+        grader = self.preview / "evals/near-miss/carrier-thank-you/graders/broken.md"
+        grader.write_text("---\ntype: regex\npattern: '(unclosed'\n---\n", "utf-8")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("invalid pattern", result.stderr)
+
+    def test_llm_grader_needs_a_rubric(self):
+        grader = self.preview / "evals/near-miss/carrier-thank-you/graders/empty.md"
+        grader.write_text("---\ntype: llm\n---\n", "utf-8")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("empty rubric", result.stderr)
+
     def test_manifest_change_needs_a_new_version(self):
         base = self.snapshot()
         for manifest in ("plugin.json", ".claude-plugin/plugin.json"):
@@ -325,9 +409,10 @@ class PackageCheckTest(unittest.TestCase):
         self.assertIn("Raise the plugin version: assets/icon.png changed", result.stderr)
 
     def test_compatibility_must_be_text(self):
-        skill = self.preview / "skills/analytics/SKILL.md"
-        original = skill.read_text(encoding="utf-8")
-        skill.write_text(original.replace("---\n", "---\ncompatibility: [a, b]\n", 1), "utf-8")
+        skill = "skills/analytics/SKILL.md"
+        text = (self.preview / skill).read_text(encoding="utf-8")
+        line = next(item for item in text.splitlines() if item.startswith("compatibility:"))
+        self.replace_in(skill, line, "compatibility: [a, b]")
         result = self.check_package()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Invalid compatibility for analytics", result.stderr)
@@ -366,6 +451,26 @@ class PackageCheckTest(unittest.TestCase):
         result = self.check_package()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("The Codex logo and composerIcon must use the plugin icon", result.stderr)
+
+    def test_missing_company_check(self):
+        skill = "skills/document-readiness/SKILL.md"
+        text = (self.preview / skill).read_text(encoding="utf-8")
+        line = next(item for item in text.splitlines() if item.startswith("- **Company first.**"))
+        self.replace_in(skill, line + "\n", "")
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Missing the company check in document-readiness", result.stderr)
+
+    def test_tool_order_grader_for_an_unmocked_tool(self):
+        grader = self.preview / "evals/near-miss/carrier-thank-you/graders/order.md"
+        grader.write_text(
+            "---\ntype: tool_order\nbefore: mcp__vektor__core_Account_CompanyRetrieve\n"
+            "after: mcp__vektor__core_Orders_Delete\n---\n",
+            "utf-8",
+        )
+        result = self.check_package()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("mcp__vektor__core_Orders_Delete is not mocked", result.stderr)
 
 
 if __name__ == "__main__":

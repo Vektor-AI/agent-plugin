@@ -1,0 +1,24 @@
+{
+  "tools": [
+    {
+      "name": "core_Orders_EtaStatesGet",
+      "title": "Get Orders Eta States",
+      "description": "The ETA rows recorded for one order's own stops in orderEtaStates[], oldest first by createdAt. Each row has stopId, type (PICKUP or DROPOFF), arrivesAt, departsAt and createdAt as \"YYYY-MM-DD HH:MM:SS\", plus eta, distance, duration and lateness. There is no location name or appointment window here, so pair it with core_Orders_Get for the stop. An order with nothing computed yet returns an empty list.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "The order's UUID, from core_Orders_Get."
+          }
+        },
+        "required": [
+          "orderId"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ]
+}
