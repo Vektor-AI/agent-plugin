@@ -202,10 +202,20 @@
     "id": "truck-settlement-cursor-failed",
     "skill": "truck-settlement-review",
     "prompt": "Show the driver settlements for this period and summarize the rows you can see.",
-    "fixture": "The exact authorized period has two records on the first page, USD and CAD, and the second page times out.",
+    "fixture": "The exact authorized period has two records on the first page with CURRENT projections and confirmed USD and CAD amounts. The second page times out.",
     "expected": [
       "Report partial coverage and separate currencies without starting detail lookups.",
       "Do not produce a whole-period or combined total."
+    ]
+  },
+  {
+    "id": "truck-settlement-period-figures-unconfirmed",
+    "skill": "truck-settlement-review",
+    "prompt": "Summarize the recorded driver settlements for this period.",
+    "fixture": "The approved finance connection returns two period rows. One has a confirmed current USD amount. The other includes an old USD amount in an UPDATING projection.",
+    "expected": [
+      "Report the first row's verified amount and the second row's current amount as unconfirmed.",
+      "Omit the stale amount and any total that would include it."
     ]
   },
   {
@@ -240,7 +250,7 @@
     "id": "broker-payable-known-zero",
     "skill": "carrier-payable-review",
     "prompt": "Does carrier bill AP-402 have a variance?",
-    "fixture": "The exact broker bill has comparison presence true, expected and billed amounts in USD, and a verified USD 0.00 variance.",
+    "fixture": "The exact protected bill detail returns currency USD, varianceKnown true, and varianceAmount 0.00.",
     "expected": [
       "Report no recorded variance for that bill and cite the verified currency."
     ]
@@ -251,7 +261,7 @@
     "prompt": "Does bill AP-403 match expected pay?",
     "fixture": "The exact broker bill shows billed and expected amounts but omits varianceKnown. A compatibility string looks like zero.",
     "expected": [
-      "Report comparison presence unreported. The compatibility placeholder and a subtraction are insufficient evidence of variance."
+      "Say “Variance unavailable. Check the comparison in Bill IQ.” Leave the placeholder and any calculated difference out of the answer."
     ]
   },
   {
@@ -287,7 +297,7 @@
     "prompt": "Is my staff settlement at Demo Carrier East ready for November 9 to 15?",
     "fixture": "A carrier self-only connection has one own OPEN employee statement and no calculation amount.",
     "expected": [
-      "Use the actor-linked statement list and match the returned period. Treat an OPEN statement pay date as expected and explain that the amount is pending. Payment is unconfirmed by the statement. Make no finance or payout lookup."
+      "Use the actor-linked statement list and match the returned period. Treat an OPEN statement pay date as expected and report its amount as unavailable. State that the calculation is pending only when the response confirms it. Payment is unconfirmed by the statement. Make no finance or payout lookup."
     ]
   },
   {
@@ -303,7 +313,7 @@
     "id": "staff-pay-individual-finance",
     "skill": "staff-settlement-review",
     "prompt": "Review staff settlement EMP-306 at Demo Carrier East. Was the contractor paid?",
-    "fixture": "Carrier finance is authorized for the chosen staff statement. It is CLOSED with USD 850 net, a USD 900 booked commission and USD 50 deduction.",
+    "fixture": "Carrier finance is authorized for the chosen staff statement. It is CLOSED. The retrieved calculation confirms USD 850 net, a USD 900 booked commission and USD 50 deduction.",
     "expected": [
       "Follow the individual staff review and explain amounts by category. Payment and paid amount are unconfirmed. The USD 850 net is the statement amount."
     ]
