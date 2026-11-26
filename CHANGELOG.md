@@ -10,6 +10,7 @@ Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json
 - Dispatch exceptions reads ETA times as UTC and calls an ETA current only when Vektor labels it current or it was computed in the last 10 minutes. Otherwise it reports the ETA as last known.
 - Setup gives only the sign-in step when Vektor is connected but signed out, instead of the commands that add it again. In Claude web or desktop it connects a listed Vektor connector before offering to add one, and it answers questions about another assistant without checking this session's connection.
 - Document readiness counts a Vektor document row as attached only when it has a file id with a current version.
+- Setup says when a connection's tool selection cannot confirm the company, and sends Claude Code users whose Vektor connector comes from their Claude account to sign in there. Analytics uses a named report when the connection has no schema tool.
 - Skill descriptions name the requests operators make, such as ETA, POD, BOL, truck and transfer questions, and point to the workflow for nearby requests.
 
 ## 0.2.0
