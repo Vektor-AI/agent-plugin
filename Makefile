@@ -1,4 +1,6 @@
-.PHONY: check
+.PHONY: check validate
+
+CLAUDE ?= claude
 
 check:
 	uv run --locked ruff check scripts tests
@@ -8,3 +10,6 @@ check:
 	actionlint -no-color
 	uv run --locked python scripts/check_package.py
 	uv run --locked python -m unittest discover -s tests
+
+validate:
+	$(CLAUDE) plugin validate --strict --profile directory .
