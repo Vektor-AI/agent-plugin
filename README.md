@@ -54,7 +54,7 @@ Replace the example IDs with references from your company. A typical answer incl
 
 ## Finance review preview
 
-These workflows use existing Vektor MCP tools and are in preview. The examples use fictional references. A connected finance review requires your organization’s approval and the appropriate access for the selected company.
+These workflows use existing Vektor MCP tools and are in preview. Choose the separate finance connection approved by your organization for the company you want to review. If your assistant only shows the standard Vektor connection, open Bill IQ or Settlements in Vektor. The examples use fictional references.
 
 | Ask your assistant | Claude Code command | Company |
 | --- | --- | --- |

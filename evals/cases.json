@@ -215,9 +215,18 @@
     "id": "broker-payable-ambiguous-manifest",
     "skill": "carrier-payable-review",
     "prompt": "How much is due on verified manifest 55555555-5555-4555-8555-555555555555?",
-    "fixture": "The existing manifest lookup returns two bills for the same verified manifest UUID. No carrier, bill number or date was specified.",
+    "fixture": "The protected bill list returns one row on the first page and totals.totalCount of two for a FIELD_MANIFEST_ID filter on this verified manifest UUID. No carrier, bill number or date was specified.",
     "expected": [
-      "Use the verified manifest UUID, ask for a bill discriminator, and avoid a guessed bill total."
+      "Filter payableinvoice_CarrierPayableInvoice_Get by FIELD_MANIFEST_ID, check totals.totalCount, and ask for a bill discriminator before Retrieve or quoting any amount."
+    ]
+  },
+  {
+    "id": "bill-review-standard-connection-only",
+    "skill": "carrier-payable-review",
+    "prompt": "The standard Vektor connection is the only one I have. How much is due on AP-405?",
+    "fixture": "Only the standard connection is installed. It advertises ordinary bill tools but no approved finance connection is available.",
+    "expected": [
+      "Point the user to Bill IQ in Vektor and stop before any bill lookup."
     ]
   },
   {
@@ -272,6 +281,15 @@
     "fixture": "The acting person has only self-pay capability. Finance and legacy tools are visible.",
     "expected": [
       "Explain the missing finance permission without querying either finance or other employee records."
+    ]
+  },
+  {
+    "id": "staff-pay-visible-without-permission",
+    "skill": "staff-settlement-review",
+    "prompt": "Use my approved finance connection at Demo Carrier East to check my staff pay.",
+    "fixture": "The company identity reply has no settlements.staff_pay.self.list key, but the self-pay list is visible.",
+    "expected": [
+      "Read company identity, explain the missing self-pay permission, and stop before any staff pay call."
     ]
   },
   {
