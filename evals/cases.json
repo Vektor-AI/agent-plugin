@@ -1,5 +1,48 @@
 [
   {
+    "id": "analytics-weekly-fuel-rates",
+    "skill": "analytics",
+    "prompt": "How much did we spend on fuel per mile last full week, by truck, in Chicago time?",
+    "fixture": "The connected company is verified. The schema defines USD transaction totals and one mileage row per truck-day. The verified weekly aggregate for DEMO-T17 is USD 1,000 across 2,000 miles. Another truck has fuel spending but no recorded mileage. No warehouse refresh cutoff is available.",
+    "expected": [
+      "Inspect the relevant schema and validate a bounded SELECT for the complete week in America/Chicago.",
+      "Aggregate fuel and mileage before joining at truck and week grain to avoid duplicated totals.",
+      "Report USD 0.50 per mile for DEMO-T17 and mark the second truck's rate unavailable.",
+      "Keep CSV export off and avoid claiming a refresh cutoff."
+    ]
+  },
+  {
+    "id": "analytics-warehouse-unavailable",
+    "skill": "analytics",
+    "prompt": "How many orders did we deliver last month?",
+    "fixture": "The active company is verified. The Analytics Database SchemaGet tool returns FailedPrecondition and reports that the analytics warehouse has not been provisioned.",
+    "expected": [
+      "Report that the warehouse is unavailable for the active company and the count is unknown.",
+      "Stop before validation or execution and avoid retries."
+    ]
+  },
+  {
+    "id": "analytics-conflicting-company",
+    "skill": "analytics",
+    "prompt": "For Demo Carrier Two, how many manifests were dispatched last week?",
+    "fixture": "The identity tool returns Demo Carrier One. The Analytics tools are visible and would return that company's data.",
+    "expected": [
+      "Call the read-only identity tool by itself and wait for the result.",
+      "Ask for the intended company connection before any warehouse call."
+    ]
+  },
+  {
+    "id": "analytics-partial-result-freshness",
+    "skill": "analytics",
+    "prompt": "How current is our fuel data and how much did we spend this month?",
+    "fixture": "A per-truck query returns 10 groups and hits its result limit. The latest transaction timestamp is last night. No refresh timestamp is exposed. A separate month-to-date aggregate is available.",
+    "expected": [
+      "Run a bounded period aggregate to answer the company total.",
+      "Describe the latest transaction timestamp as observed record coverage and state that refresh time is unknown.",
+      "Avoid treating the sum of the returned truck groups as the company total."
+    ]
+  },
+  {
     "id": "dispatch-missing-eta",
     "skill": "dispatch-exceptions",
     "prompt": "Is load DEMO-101 going to miss delivery this afternoon?",

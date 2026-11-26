@@ -45,6 +45,7 @@ Ask in your own words. To pick a skill yourself, run a Claude Code command below
 
 | Ask your assistant | Claude Code command |
 | --- | --- |
+| How many orders did we deliver last full week? | `/vektor:analytics` |
 | Is load DEMO-101 still on track for delivery? | `/vektor:dispatch-exceptions` |
 | What truck is assigned to manifest DEMO-M301? | `/vektor:manifest-fleet-context` |
 | Which loads delivered this week still need a POD? | `/vektor:document-readiness` |
