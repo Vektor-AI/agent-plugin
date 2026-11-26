@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "vektor",
-  "version": "0.1.0",
-  "description": "Check freight exceptions, manifest assignments, and document readiness in Vektor TMS.",
+  "version": "0.2.0",
+  "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting.",
   "author": {
     "name": "Vektor TMS",
     "url": "https://vektortms.com/"
@@ -10,10 +10,37 @@
   "license": "Apache-2.0",
   "homepage": "https://vektortms.com/",
   "repository": "https://github.com/Vektor-AI/agent-plugin",
+  "keywords": [
+    "vektor",
+    "tms",
+    "freight",
+    "logistics",
+    "trucking",
+    "dispatch",
+    "transportation-management",
+    "mcp"
+  ],
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Vektor TMS"
+        "displayName": "Vektor TMS",
+        "shortDescription": "Read-only freight workflows for Vektor TMS",
+        "longDescription": "Check delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting in Vektor TMS. The workflows use read-only tools on the Vektor connection you authorize for one company.",
+        "developerName": "Vektor TMS",
+        "category": "Productivity",
+        "capabilities": [
+          "Read"
+        ],
+        "websiteURL": "https://vektortms.com/",
+        "privacyPolicyURL": "https://vektortms.com/privacy",
+        "termsOfServiceURL": "https://vektortms.com/terms",
+        "defaultPrompt": [
+          "Which delivery exceptions should the next shift know about?",
+          "Which loads delivered this week still need a POD?",
+          "Which Vektor company am I connected to?"
+        ],
+        "logo": "./.claude-plugin/icon.png",
+        "composerIcon": "./.claude-plugin/icon.png"
       }
     }
   }
