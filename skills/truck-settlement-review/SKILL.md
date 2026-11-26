@@ -2,6 +2,7 @@
 name: truck-settlement-review
 description: Review a carrier's driver, vendor, or company truck settlement in Vektor TMS. Find a statement, explain booked pay or deductions, or summarize a bounded settlement period. Staff pay and broker carrier bills have separate workflows.
 license: Apache-2.0
+compatibility: Requires the separate Vektor TMS finance connection approved for the company (remote MCP). Uses read-only tools.
 ---
 
 # Truck settlement review

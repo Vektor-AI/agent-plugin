@@ -2,6 +2,7 @@
 name: carrier-payable-review
 description: Review a broker's carrier bill in Vektor TMS Bill IQ. Find a bill by reference or manifest, review a bounded due-date queue, or explain the recorded approval, balance and variance.
 license: Apache-2.0
+compatibility: Requires the separate Vektor TMS finance connection approved for the company (remote MCP). Uses read-only tools.
 ---
 
 # Carrier payable review

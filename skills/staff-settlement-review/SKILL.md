@@ -2,6 +2,7 @@
 name: staff-settlement-review
 description: Review staff or agent settlements at a carrier or broker in Vektor TMS. Use for your own pay statement, one statement under finance access, or a staff pay run's approval, blockers and planned routes.
 license: Apache-2.0
+compatibility: Requires the separate Vektor TMS finance connection approved for the company (remote MCP). Uses read-only tools.
 ---
 
 # Staff settlement review
