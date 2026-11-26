@@ -4,7 +4,7 @@ People get the plugin from this repository or from a plugin directory that serve
 
 ## Release a change
 
-1. Raise `version` in `.claude-plugin/plugin.json` and `plugin.json` together. Use a minor version for a new or changed workflow and a patch version for a wording fix.
+1. Raise `version` in `.claude-plugin/plugin.json` and `plugin.json` together. Raise the patch version for each release, such as 0.2.0 to 0.2.1. Raise the minor version only for a larger planned release that groups several changes, such as a weekly release.
 2. Add a `## <version>` entry to [the changelog](CHANGELOG.md) that says what changes for operators.
 3. Run `PLUGIN_BASE_REF=origin/master make check validate`. The check fails when a skill, manifest or the icon changed since the branch you merge into without a higher version.
 4. If another release merged after the checks ran, update the branch from `master` and let the checks run again. They compare with the branch as it was when they ran.

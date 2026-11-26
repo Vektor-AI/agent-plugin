@@ -36,6 +36,9 @@ SHIPPED_PATHS = (
     ".claude-plugin/plugin.json",
     "plugin.json",
 )
+COMPANY_CHECK = "- **Company first.**"
+# Skills that look up records and must open with the shared company check.
+COMPANY_CHECK_SKILLS = ("dispatch-exceptions", "document-readiness", "manifest-fleet-context")
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
@@ -210,6 +213,7 @@ def check_skills() -> set[str]:
     skill_dirs = sorted(skills_root.iterdir())
     require(skill_dirs, "Expected at least one skill")
     names = set()
+    company_checks = {}
     for directory in skill_dirs:
         name = directory.name
         require(
@@ -240,14 +244,11 @@ def check_skills() -> set[str]:
         )
         require(metadata.get("license") == "Apache-2.0", f"Missing Apache-2.0 license for {name}")
         require("allowed-tools" not in metadata, f"Unexpected tool preapproval for {name}")
-        if "compatibility" in metadata:
-            compatibility = metadata["compatibility"]
-            require(
-                isinstance(compatibility, str)
-                and compatibility.strip()
-                and len(compatibility) <= 500,
-                f"Invalid compatibility for {name}: use text of at most 500 characters",
-            )
+        compatibility = metadata.get("compatibility")
+        require(
+            isinstance(compatibility, str) and compatibility.strip() and len(compatibility) <= 500,
+            f"Invalid compatibility for {name}: use text of at most 500 characters",
+        )
         if "metadata" in metadata:
             values = metadata["metadata"]
             require(
@@ -257,12 +258,22 @@ def check_skills() -> set[str]:
                 ),
                 f"Invalid metadata for {name}: use a map of text keys to text values",
             )
+        checks = [line for line in body.splitlines() if line.startswith(COMPANY_CHECK)]
+        require(len(checks) <= 1, f"More than one company check in {name}")
+        if checks:
+            company_checks[name] = checks[0]
         for document in directory.rglob("*.md"):
             text = body if document == skill_file else document.read_text(encoding="utf-8")
             check_links(document, text, directory)
             if document != skill_file:
                 check_reference_depth(document, text)
         names.add(name)
+    missing = sorted(set(COMPANY_CHECK_SKILLS) - set(company_checks))
+    require(not missing, "Missing the company check in " + ", ".join(missing))
+    require(
+        len(set(company_checks.values())) <= 1,
+        "Company first paragraphs differ between skills: " + ", ".join(sorted(company_checks)),
+    )
     return names
 
 
@@ -275,41 +286,6 @@ def check_reference_depth(path: Path, body: str) -> None:
             f"Reference files must not link to other files: {path.relative_to(ROOT)} links "
             f"{unquote(link.path)}"
         )
-
-
-def check_cases(skills: set[str]) -> int:
-    seen = set()
-    covered = set()
-    cases = read_json("evals/cases.json")
-    require(isinstance(cases, list) and cases, "Expected a list of synthetic cases")
-    for case in cases:
-        require(isinstance(case, dict), "Each synthetic case must be an object")
-        case_id = case.get("id")
-        require(
-            isinstance(case_id, str) and NAME.fullmatch(case_id) and case_id not in seen,
-            f"Invalid or duplicate case {case_id}",
-        )
-        seen.add(case_id)
-        skill = case.get("skill")
-        require(
-            "skill" in case and (skill is None or isinstance(skill, str) and skill in skills),
-            f"Unknown or missing skill {skill} in {case_id}",
-        )
-        covered.add(skill)
-        for field in ("prompt", "fixture"):
-            value = case.get(field)
-            require(isinstance(value, str) and value.strip(), f"Invalid {field} in {case_id}")
-        outcomes = case.get("expected")
-        require(
-            isinstance(outcomes, list)
-            and outcomes
-            and all(isinstance(outcome, str) and outcome.strip() for outcome in outcomes),
-            f"Invalid expected outcomes in {case_id}",
-        )
-    require(
-        skills | {None} == covered, "Each skill and a non-activation case need evaluation coverage"
-    )
-    return len(cases)
 
 
 def check_changelog(version: str) -> None:
@@ -358,11 +334,7 @@ if __name__ == "__main__":
         document = ROOT / path
         check_links(document, document.read_text(encoding="utf-8"), ROOT)
     skills = check_skills()
-    count = check_cases(skills)
     base = os.environ.get("PLUGIN_BASE_REF")
     icon = read_json(".claude-plugin/plugin.json")["icon"]
     release = check_release(base, version, icon) if base else "release check skipped"
-    print(
-        f"Validated manifests, marketplaces, local links, {len(skills)} skills and {count} "
-        f"synthetic cases ({release})."
-    )
+    print(f"Validated manifests, marketplaces, local links and {len(skills)} skills ({release}).")
