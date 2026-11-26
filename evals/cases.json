@@ -243,7 +243,7 @@
     "fixture": "The bill links to manifest MF-501. The detail reports APPROVED and PARTIALLY_PAID, CAD 1,500 billed, CAD 300 remaining and varianceKnown false.",
     "expected": [
       "Use a positive perPage, a reference EQUALS filter, and the returned payableInvoiceId as carrierPayableInvoiceId for detail.",
-      "Report approval and payment status separately, with CAD 300 remaining and unavailable variance. Keep the paid amount and expected amount unavailable. Give a reason for unavailable variance only if it is in the result."
+      "Report approval and payment status separately, with CAD 300 remaining. Keep the paid amount and expected amount unavailable. Say “Variance unavailable. Check the comparison in Bill IQ.”"
     ]
   },
   {
@@ -286,9 +286,9 @@
     "id": "broker-payable-currency-unknown",
     "skill": "carrier-payable-review",
     "prompt": "How much remains due on carrier invoice AP-405?",
-    "fixture": "The legacy reply contains a remaining amount and USD with no independent confirmation of the stored currency.",
+    "fixture": "The exact protected bill detail returns recorded approval and payment status. The stored currency could not be verified, so the detail omits currency and amounts.",
     "expected": [
-      "Say remaining and currency are unavailable. Do not default to USD."
+      "Report the recorded status and say the balance and currency are unavailable. Do not default to USD."
     ]
   },
   {
