@@ -20,11 +20,13 @@ jobs:
   check:
     name: Check plugin source
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # The first parent is the branch this change merges into.
+          fetch-depth: 2
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
         with:
           version: "0.12.19"
@@ -42,4 +44,26 @@ jobs:
           mkdir -p "$bin_dir"
           tar -xzf "$archive" -C "$bin_dir" actionlint
           printf '%s\n' "$bin_dir" >> "$GITHUB_PATH"
-      - run: make check
+      - name: Install pinned Claude Code
+        run: |
+          archive="$RUNNER_TEMP/claude-code.tgz"
+          curl --fail --silent --show-error --location --max-time 300 \
+            "https://registry.npmjs.org/@anthropic-ai/claude-code-linux-x64/-/claude-code-linux-x64-2.1.326.tgz" \
+            --output "$archive"
+          checksum="113a6b58f9ee5a94b8bb841252070f60ff5f295b3d28c7f40b480a5b54f5579b"
+          printf '%s  %s\n' "$checksum" "$archive" | sha256sum --check --status
+          bin_dir="$RUNNER_TEMP/claude-code-bin"
+          mkdir -p "$bin_dir"
+          tar -xzf "$archive" -C "$bin_dir" --strip-components=1 package/claude
+          printf '%s\n' "$bin_dir" >> "$GITHUB_PATH"
+      - name: Check plugin package and release version
+        env:
+          PLUGIN_BASE_REF: HEAD^1
+        run: make check
+      - name: Validate for the Claude plugin directory
+        env:
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+        run: |
+          export CLAUDE_CONFIG_DIR="$RUNNER_TEMP/claude-config"
+          claude --version
+          make validate

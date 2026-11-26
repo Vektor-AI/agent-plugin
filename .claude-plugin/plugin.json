@@ -1,13 +1,28 @@
 {
   "name": "vektor",
   "displayName": "Vektor TMS",
-  "version": "0.1.0",
-  "description": "Check freight exceptions, manifest assignments, and document readiness in Vektor TMS.",
+  "version": "0.2.0",
+  "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting.",
   "author": {
     "name": "Vektor TMS",
     "url": "https://vektortms.com/"
   },
   "license": "Apache-2.0",
   "homepage": "https://vektortms.com/",
-  "repository": "https://github.com/Vektor-AI/agent-plugin"
+  "repository": "https://github.com/Vektor-AI/agent-plugin",
+  "keywords": [
+    "vektor",
+    "tms",
+    "freight",
+    "logistics",
+    "trucking",
+    "dispatch",
+    "transportation-management",
+    "mcp"
+  ],
+  "icon": "./.claude-plugin/icon.png",
+  "documentationUrl": "https://github.com/Vektor-AI/agent-plugin#readme",
+  "supportUrl": "https://vektortms.com/contact",
+  "privacyPolicyUrl": "https://vektortms.com/privacy",
+  "termsOfServiceUrl": "https://vektortms.com/terms"
 }
