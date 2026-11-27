@@ -5,7 +5,7 @@ Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json
 ## 0.2.4
 
 - In a shift handoff or list, dispatch exceptions puts a load whose risk rests only on a last-known ETA among the items needing a check, not the confirmed exceptions, and words its gap as the ETA's rather than calling the load late.
-- A load whose stop is still pending after its window ended, or whose recorded arrival came after the window, is a confirmed exception whatever its ETA shows. "Current delivery risk is unconfirmed." now opens an answer only while no arrival is recorded and the window has not ended.
+- A load whose stop is still pending after its agreed window ended, or whose recorded arrival came after the window, is a confirmed exception whatever its ETA shows. Once a stop records its arrival, the arrival, not an ETA, decides whether it made the appointment. "Current delivery risk is unconfirmed." now opens an answer only while no arrival is recorded and the window has not ended.
 - Every last-known ETA is labelled last known with the time it was computed, or says that time was not provided.
 - Stop appointment, arrival and departure times are read as the stop's local time.
 
