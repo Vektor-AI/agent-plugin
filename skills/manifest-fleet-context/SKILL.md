@@ -19,7 +19,7 @@ Answer the assignment question using the signed-in company's records.
 2. **Read the assignment.**
    - Start from the manifest assignment and stop status. Look up permitted truck or trailer identifiers and status only for equipment that assignment references.
    - For a transfer or a load with several legs, keep previous and current assignments distinct. Confirm the timestamp and source when present.
-   - Call a leg previous only when the source shows it completed or handed the load over. When two legs or manifests for the load are both active, name both, call neither current or more likely, even when one was assigned later, and give the check that settles it, such as whether the earlier leg's handoff stop is complete.
+   - Call a leg previous only when the source shows it completed or handed the load over. When two legs or manifests for the load are both active and no record shows the handoff, name both, call neither current or more likely, even when one was assigned later, and give the check that settles it, such as whether the earlier leg's handoff stop is complete. A recorded handoff settles which assignment is current even while the earlier manifest still shows active.
 3. **Limit the result.**
    - Give the manifest or load reference, operational equipment label, assignment status and relevant stop when supported. Include the company when known, or refer to the current Vektor connection.
    - Include a permitted display name only if the question needs it. Leave out exact coordinates, personal contact details, payment details and internal identifiers unrelated to the task.
