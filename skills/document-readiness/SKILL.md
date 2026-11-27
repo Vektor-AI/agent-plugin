@@ -1,6 +1,6 @@
 ---
 name: document-readiness
-description: Check whether freight paperwork is recorded, missing or unknown in Vektor TMS for a load or a bounded set of loads, using document metadata only. Use for POD or proof of delivery, BOL or bill of lading, and rate confirmation questions, such as which delivered loads still need a POD or whether a load's paperwork is complete. Also use when someone asks whether a Vektor load or order is ready without saying for what, to ask which kind of readiness they mean first. Does not open, download or extract files, or create orders.
+description: Check whether freight paperwork is recorded, missing or unknown in Vektor TMS for a load or a bounded set of loads, using document metadata only. Use for POD or proof of delivery, BOL or bill of lading, and rate confirmation questions, such as which delivered loads still need a POD or whether a load's paperwork is complete. Also use when someone asks whether a load, order or reference is ready without saying for what, even when the question names only a load number, to ask which kind of readiness they mean before any lookup. Does not open, download or extract files, or create orders.
 license: Apache-2.0
 compatibility: Requires a signed-in Vektor TMS connection (remote MCP). Uses read-only tools.
 ---
