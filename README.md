@@ -75,7 +75,7 @@ Use `https://mcp.vektortms.com/mcp` in assistants that support remote MCP and OA
 
 ## Try a task
 
-Ask in your own words. To pick a skill yourself, run a Claude Code command below or type `@` in Codex and search for its name.
+Ask in your own words. To choose a skill directly, run a Claude Code command below or type `$` in Codex CLI and select the skill by name.
 
 | Ask your assistant | Claude Code command |
 | --- | --- |
@@ -87,6 +87,17 @@ Ask in your own words. To pick a skill yourself, run a Claude Code command below
 | Which Vektor company are you connected to? | `/vektor:setup` |
 
 Replace the example IDs with references from your company. A typical answer includes the source records and what still needs checking. The workflows use read-only tools. Your Vektor permissions determine which records the assistant can see.
+
+## Finance review preview
+
+These workflows use existing Vektor MCP tools and are in preview. They read only what your Vektor permissions allow. If a read is refused, open Bill IQ or Settlements in Vektor. The examples use fictional references.
+
+| Ask your assistant | Claude Code command | Company |
+| --- | --- | --- |
+| Why is driver settlement STL-301 still being recalculated? | `/vektor:truck-settlement-review` | Carrier or hybrid |
+| Is carrier bill AP-401 approved and what does the broker still owe? | `/vektor:carrier-payable-review` | Broker or hybrid |
+| Can you explain my own staff pay statement for the last pay period? | `/vektor:staff-settlement-review` | Carrier, broker or hybrid |
+| What is blocking approval for the Office staff pay run? | `/vektor:staff-settlement-review` | Carrier, broker or hybrid with staff finance access |
 
 ## Troubleshoot
 

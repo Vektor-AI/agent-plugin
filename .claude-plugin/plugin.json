@@ -1,8 +1,8 @@
 {
   "name": "vektor",
   "displayName": "Vektor TMS",
-  "version": "0.2.2",
-  "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting.",
+  "version": "0.2.3",
+  "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, Analytics reporting, and settlement and carrier bill reviews.",
   "author": {
     "name": "Vektor TMS",
     "url": "https://vektortms.com/"

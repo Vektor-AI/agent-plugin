@@ -2,6 +2,10 @@
 
 Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json`. Assistants keep an installed plugin on its version until the version changes, so a release without a new version never reaches existing installs.
 
+## 0.2.3
+
+- Added finance review previews for truck settlements, carrier bills and staff pay. They read only what your Vektor permissions allow.
+
 ## 0.2.2
 
 - Analytics triggers on rate and average questions that a named Vektor report answers, and starts with schema discovery whenever the warehouse tool is available.
