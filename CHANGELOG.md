@@ -4,7 +4,7 @@ Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json
 
 ## 0.2.3
 
-- Dispatch exceptions reads Vektor ETA durations and lateness as minutes and reports the ETA as Vektor computed it, which can include rest and appointment waits. When the only ETA is last known, the answer opens with "Current delivery risk is unconfirmed."
+- Dispatch exceptions reads Vektor ETA durations and lateness as minutes and reports the ETA as Vektor computed it, which can include rest and appointment waits. It gives an early, on-time or late verdict only against an agreed appointment window. When the only ETA is last known, a one-load answer, or that load's entry in a handoff, opens with "Current delivery risk is unconfirmed."
 - Document readiness also answers a bare "is it ready?" about a load reference by asking which readiness is meant.
 
 ## 0.2.2
