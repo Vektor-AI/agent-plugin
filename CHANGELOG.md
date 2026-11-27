@@ -2,6 +2,11 @@
 
 Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json`. Assistants keep an installed plugin on its version until the version changes, so a release without a new version never reaches existing installs.
 
+## 0.2.5
+
+- Dispatch exceptions never quotes a stop's coordinates, including to explain how it inferred the stop's timezone; it says the timezone was inferred from the stop's location.
+- Manifest and fleet context calls a leg previous only when the source shows it completed or handed the load over. When two legs or manifests for a load are both active and no record shows the later leg picked the load up, it names both, calls neither current or more likely, even when one was assigned later, and gives the check that settles it. For a question about the load as a whole it compares the legs instead of asking which leg is meant, and it never quotes a coordinate, even beside a place name.
+
 ## 0.2.4
 
 - In a shift handoff or list, dispatch exceptions puts a load whose risk rests only on a last-known ETA among the items needing a check, not the confirmed exceptions, and words its gap as the ETA's rather than calling the load late.

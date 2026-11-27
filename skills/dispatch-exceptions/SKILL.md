@@ -35,7 +35,7 @@ Identify the load or queue and report the dispatch facts that determine the next
 4. **Answer for dispatch.**
    - Return the load reference, verified status, scheduled window, latest relevant event or ETA, and the next check if a decision is blocked.
    - For several loads, list confirmed exceptions and items needing a check separately. A confirmed exception rests on the load's recorded status or events, an agreed window that ended with the stop still pending, or, while the arrival is pending, a current ETA. Include the company when known, record references and source times; otherwise refer to the current Vektor connection.
-   - Limit the result to operational facts. Leave out exact coordinates, personal contact details and payment details.
+   - Limit the result to operational facts. Leave out exact coordinates, personal contact details and payment details. Never quote a coordinate, even to explain how a stop's timezone was inferred; say it was inferred from the stop's location.
 
 Stop before changing appointments, assigning equipment or sending messages. If the Vektor connection or a required read tool is unavailable, name the missing access and stop the live lookup.
 

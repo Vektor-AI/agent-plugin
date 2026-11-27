@@ -13,15 +13,16 @@ Answer the assignment question using the signed-in company's records.
 - **Company first.** Use the signed-in Vektor connection. If the user names a company, confirm it from the connection details or with a standalone read-only identity call, and wait for the result. If the company is unavailable, conflicts, or several connections could match, stop and ask the user to choose or reconnect the intended company. Make no load, document, manifest or equipment lookup until the company matches, and keep the identity call in its own tool batch.
 
 1. **Find the manifest.**
-   - Retrieve the named manifest, or resolve the user's load and follow its linked manifest. Use the actual schema and IDs returned by Vektor.
-   - Confirm which active assignment or leg the user means when several are visible.
+   - Retrieve the named manifest, or resolve the user's load and follow its linked manifests. Use the actual schema and IDs returned by Vektor.
+   - When the user asks about one assignment or leg and several are visible, confirm which one they mean. For a question about the load as a whole, read every linked manifest, say which could not be read, and compare the legs as step 2 says.
    - When searching a list, follow available pages until the scope is complete or a page fails or reaches an applicable limit.
 2. **Read the assignment.**
    - Start from the manifest assignment and stop status. Look up permitted truck or trailer identifiers and status only for equipment that assignment references.
    - For a transfer or a load with several legs, keep previous and current assignments distinct. Confirm the timestamp and source when present.
+   - Call a leg previous only when the source shows it completed or handed the load over. When two legs or manifests for the load are both active and no record shows the later leg picked the load up, name both, call neither current or more likely, even when one was assigned later, and give the check that settles it, such as the handoff stop's status on each leg. A record that the later leg picked the load up at the handoff settles which assignment is current, even while the earlier manifest still shows active, unless a later record shows that leg handed the load on.
 3. **Limit the result.**
    - Give the manifest or load reference, operational equipment label, assignment status and relevant stop when supported. Include the company when known, or refer to the current Vektor connection.
-   - Include a permitted display name only if the question needs it. Leave out exact coordinates, personal contact details, payment details and internal identifiers unrelated to the task.
+   - Include a permitted display name only if the question needs it. Leave out exact coordinates, personal contact details, payment details and internal identifiers unrelated to the task. Never quote a coordinate, even beside a place name or to say where a truck last reported.
 4. **Handle gaps.**
    - Say which assignment or next stop cannot be confirmed when the relationship is absent, mismatched, stale or outside the connection's permissions. Treat incomplete lookup results as unknown.
    - Report an unassigned state only when the source confirms it. Give the operator the smallest next check.

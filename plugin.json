@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "vektor",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Read-only Vektor TMS workflows for delivery exceptions, manifest and equipment assignments, freight paperwork status, and Analytics reporting.",
   "author": {
     "name": "Vektor TMS",
