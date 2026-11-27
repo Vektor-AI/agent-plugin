@@ -14,12 +14,12 @@ Answer the assignment question using the signed-in company's records.
 
 1. **Find the manifest.**
    - Retrieve the named manifest, or resolve the user's load and follow its linked manifest. Use the actual schema and IDs returned by Vektor.
-   - Confirm which active assignment or leg the user means when several are visible.
+   - When the user asks about one assignment or leg and several are visible, confirm which one they mean. For a question about the load as a whole, compare its legs as step 2 says.
    - When searching a list, follow available pages until the scope is complete or a page fails or reaches an applicable limit.
 2. **Read the assignment.**
    - Start from the manifest assignment and stop status. Look up permitted truck or trailer identifiers and status only for equipment that assignment references.
    - For a transfer or a load with several legs, keep previous and current assignments distinct. Confirm the timestamp and source when present.
-   - Call a leg previous only when the source shows it completed or handed the load over. When two or more legs or manifests for the load are active, call one current only when a record shows that leg has taken the load, such as its pickup at the handoff stop marked complete. A later assignment time does not show that, and neither does the earlier leg handing the load over. Otherwise name each active leg, call none current or more likely, say what the records do show, and give the check that settles it, such as whether the receiving leg's pickup is complete.
+   - Call a leg previous only when the source shows it completed or handed the load over. When two or more legs or manifests for the load are active, call one current only when a record shows that leg has taken the load, such as its pickup at the handoff stop marked complete. A later assignment time does not show that, and neither does the earlier leg handing the load over. Otherwise name each active leg and call none current or more likely, the earlier leg included, since it may have dropped the load. Say what the records do show, and give the check that settles it, such as whether the receiving leg's pickup is complete.
 3. **Limit the result.**
    - Give the manifest or load reference, operational equipment label, assignment status and relevant stop when supported. Include the company when known, or refer to the current Vektor connection.
    - Include a permitted display name only if the question needs it. Leave out exact coordinates, personal contact details, payment details and internal identifiers unrelated to the task.
