@@ -4,7 +4,7 @@ Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json
 
 ## 0.2.4
 
-- In a shift handoff or list, dispatch exceptions puts a load whose only ETA is last known among the items needing a check, not the confirmed exceptions, and words its gap as the ETA's rather than calling the load late.
+- In a shift handoff or list, dispatch exceptions puts a load whose risk rests only on a last-known ETA among the items needing a check, not the confirmed exceptions, and words its gap as the ETA's rather than calling the load late.
 
 ## 0.2.3
 
