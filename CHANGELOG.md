@@ -2,6 +2,13 @@
 
 Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json`. Assistants keep an installed plugin on its version until the version changes, so a release without a new version never reaches existing installs.
 
+## 0.2.4
+
+- In a shift handoff or list, dispatch exceptions puts a load whose risk rests only on a last-known ETA among the items needing a check, not the confirmed exceptions, and words its gap as the ETA's rather than calling the load late.
+- A load whose stop is still pending after its agreed window ended, or whose recorded arrival came after the window, is a confirmed exception whatever its ETA shows. Once a stop records its arrival, the arrival, not an ETA, decides whether it made the appointment. "Current delivery risk is unconfirmed." now opens an answer only while no arrival is recorded and the window has not ended.
+- Every last-known ETA is labelled last known with the time it was computed, or says that time was not provided.
+- Stop appointment, arrival and departure times are read as the stop's local time.
+
 ## 0.2.3
 
 - Dispatch exceptions reads Vektor ETA durations and lateness as minutes and reports the ETA as Vektor computed it, which can include rest and appointment waits. It gives an early, on-time or late verdict only against an agreed appointment window. When the only ETA is last known, a one-load answer, or that load's entry in a handoff, opens with "Current delivery risk is unconfirmed."
