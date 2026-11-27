@@ -2,6 +2,11 @@
 
 Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json`. Assistants keep an installed plugin on its version until the version changes, so a release without a new version never reaches existing installs.
 
+## 0.2.3
+
+- Dispatch exceptions reads Vektor ETA durations and lateness as minutes and reports the ETA as Vektor computed it, which can include rest and appointment waits. When the only ETA is last known, the answer opens with "Current delivery risk is unconfirmed."
+- Document readiness also answers a bare "is it ready?" about a load reference by asking which readiness is meant.
+
 ## 0.2.2
 
 - Analytics triggers on rate and average questions that a named Vektor report answers, and starts with schema discovery whenever the warehouse tool is available.

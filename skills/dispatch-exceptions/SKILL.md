@@ -21,9 +21,11 @@ Identify the load or queue and report the dispatch facts that determine the next
    - Read the load status and the scheduled window. Consult manifest or ETA evidence only when it is linked to the same load and stop. Check tool errors and completeness before using the data.
 3. **Classify from the records.**
    - Use a confirmed event for arrived or delivered status. Compare a current ETA with the scheduled window in the same timezone. Label a prediction as an ETA with its timestamp when available.
-   - Times in Vektor ETA rows that carry no timezone are UTC. Convert them to the stop's timezone, or state both, before comparing them with an appointment.
+   - Times in Vektor ETA rows that carry no timezone are UTC. This is how Vektor stores them, not an assumption to hedge. Convert them to the stop's timezone, or state both, before comparing them with an appointment.
+   - Vektor ETA rows give `eta`, `duration`, `lateness` and `earliness` in minutes and `distance` in miles. Vektor's estimate can include hours-of-service rest and waiting for an appointment window, so report its arrival time as computed instead of recomputing it from distance or speed.
    - Treat an ETA as current only when the tool labels it current, or, without a label, when it was computed at most 10 minutes before the current time. Otherwise it is last known: Vektor recomputes a live ETA at least every 10 minutes.
-   - When the only ETA is last known, lead with "Current delivery risk is unconfirmed." Label the prediction as last known with the time it was computed. If that ETA falls after the scheduled window, explain the comparison and recommend getting a fresh ETA.
+   - When the ETA is current, compare it with the scheduled window and state the result.
+   - Only when the only ETA is last known, the answer's first sentence is "Current delivery risk is unconfirmed." Put no verdict on making or missing the appointment before it. Then label the prediction as last known with the time it was computed, and say plainly whether it falls before, inside or after the scheduled window. If it falls after, recommend getting a fresh ETA.
    - Say `ETA unavailable` or `status unknown` when the evidence is missing. For a partial list, report the checked scope and leave unchecked loads out of totals.
 4. **Answer for dispatch.**
    - Return the load reference, verified status, scheduled window, latest relevant event or ETA, and the next check if a decision is blocked.
