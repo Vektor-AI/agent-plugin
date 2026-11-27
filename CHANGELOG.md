@@ -5,6 +5,7 @@ Each release raises the version in `.claude-plugin/plugin.json` and `plugin.json
 ## 0.2.5
 
 - Dispatch exceptions never quotes a stop's coordinates, including to explain how it inferred the stop's timezone; it says the timezone was inferred from the stop's location.
+- Manifest and fleet context calls a leg previous only when the source shows it completed or handed the load over. When two legs or manifests are both active, it names both trucks, calls neither current or more likely, and gives the check that settles it.
 
 ## 0.2.4
 
