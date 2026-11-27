@@ -19,10 +19,10 @@ Answer the assignment question using the signed-in company's records.
 2. **Read the assignment.**
    - Start from the manifest assignment and stop status. Look up permitted truck or trailer identifiers and status only for equipment that assignment references.
    - For a transfer or a load with several legs, keep previous and current assignments distinct. Confirm the timestamp and source when present.
-   - Call a leg previous only when the source shows it completed or handed the load over. When two or more legs or manifests for the load are active, call one current only when a record shows that leg has taken the load, such as its pickup at the handoff stop marked complete. A later assignment time does not show that, and neither does the earlier leg handing the load over. Otherwise name each active leg and call none current or more likely, the earlier leg included, since it may have dropped the load. Say what the records do show, and give the check that settles it, such as whether the receiving leg's pickup is complete.
+   - Call a leg previous only when the source shows it completed or handed the load over. When two legs or manifests for the load are both active and no record shows the later leg picked the load up, name both, call neither current or more likely, even when one was assigned later, and give the check that settles it, such as the handoff stop's status on each leg. A record that the later leg picked the load up at the handoff settles which assignment is current, even while the earlier manifest still shows active.
 3. **Limit the result.**
    - Give the manifest or load reference, operational equipment label, assignment status and relevant stop when supported. Include the company when known, or refer to the current Vektor connection.
-   - Include a permitted display name only if the question needs it. Leave out exact coordinates, personal contact details, payment details and internal identifiers unrelated to the task.
+   - Include a permitted display name only if the question needs it. Leave out exact coordinates, personal contact details, payment details and internal identifiers unrelated to the task. Never quote a coordinate, even beside a place name or to say where a truck last reported.
 4. **Handle gaps.**
    - Say which assignment or next stop cannot be confirmed when the relationship is absent, mismatched, stale or outside the connection's permissions. Treat incomplete lookup results as unknown.
    - Report an unassigned state only when the source confirms it. Give the operator the smallest next check.
